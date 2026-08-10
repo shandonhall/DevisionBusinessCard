@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { signOutAction } from "@/lib/auth/actions";
+import { PlatformOrgSwitcher } from "@/components/admin/platform-org-switcher";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { PLATFORM_NAME } from "@/lib/branding/platform";
@@ -49,6 +51,11 @@ export function AppHeader({
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+            {showAdminLink ? (
+              <Suspense fallback={null}>
+                <PlatformOrgSwitcher />
+              </Suspense>
+            ) : null}
             {email ? (
               <span className="hidden max-w-[14rem] truncate text-sm leading-none text-[var(--brand-text)] lg:inline">
                 {email}

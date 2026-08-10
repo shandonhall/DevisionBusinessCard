@@ -68,10 +68,46 @@ export const dimensionVisualDNA: BrandVisualDNA = {
   cornerStyle: "precision",
 };
 
+/**
+ * Drive preset — premium automotive studio / precision credential.
+ * Graphite-lacquer material, restrained reflections, AGG-ready hierarchy.
+ * Visual implementation lands in Milestone C; DNA/config is ready now.
+ */
+export const driveExperienceConfig: ExperienceConfig = {
+  preset: "drive",
+  depth: 0.78,
+  tiltStrength: 0.48,
+  parallaxStrength: 0.42,
+  reflectionStrength: 0.62,
+  ambientMotion: true,
+  transitionStyle: "rise",
+  revealStyle: "stagger",
+  interactionIntensity: 0.55,
+  particleIntensity: 0,
+  logoTreatment: "embedded",
+  profileTreatment: "integrated",
+  environmentTone: "studio-dark",
+  chromaticIntensity: 0.28,
+  allowWebGL: false,
+  allowAdvancedEffects: true,
+  reducedMotionFallback: "essential",
+};
+
+export const driveVisualDNA: BrandVisualDNA = {
+  visualPersonality: "cinematic",
+  surfaceStyle: "graphite-lacquer",
+  backgroundStyle: "studio",
+  geometryStyle: "sharp",
+  imageTreatment: "integrated",
+  borderStyle: "subtle",
+  cornerStyle: "precision",
+};
+
 export function presetExperienceConfig(
   preset: ExperiencePresetId | null,
 ): ExperienceConfig {
   if (preset === "dimension") return { ...dimensionExperienceConfig };
+  if (preset === "drive") return { ...driveExperienceConfig };
   if (preset === "minimal-motion") {
     return {
       ...platformExperienceConfig,

@@ -102,7 +102,7 @@ a {
   }
 }
 
-/* Staggered entrance — set --enter-delay per section. */
+/* Staggered entrance ? set --enter-delay per section. */
 .card-enter {
   animation: card-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--enter-delay, 0s);
@@ -193,7 +193,7 @@ a {
 }
 
 /* ---------------------------------------------------------------- */
-/* Dimension — chromatic smoked acrylic object experience            */
+/* Dimension ? chromatic smoked acrylic object experience            */
 /* ---------------------------------------------------------------- */
 
 @keyframes dim-enter-rise {
@@ -385,7 +385,7 @@ a {
   pointer-events: none;
 }
 
-/* Card stage + 3D object — never put filter on 3D parents (flattens preserve-3d) */
+/* Card stage + 3D object ? never put filter on 3D parents (flattens preserve-3d) */
 .dim-card-shadow {
   pointer-events: none;
   position: absolute;
@@ -1329,4 +1329,1208 @@ a {
   }
 }
 
+/* ==========================================================================
+   DRIVE ? graphite lacquer automotive credential (AGG / experience preset)
+   Refinement pass: physical thickness, studio specular, hero scale
+   ========================================================================== */
 
+.drive-shell {
+  --drive-champagne: color-mix(in srgb, var(--brand-accent, #c9a962) 68%, #f3e8d2);
+  --drive-champagne-deep: color-mix(in srgb, var(--drive-champagne) 72%, #6a5428);
+  --drive-graphite: #14191f;
+  --drive-graphite-mid: #1c232b;
+  --drive-graphite-deep: #0a0d11;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 58%, #7a6a48);
+  font-family: var(--brand-body-font);
+}
+
+.drive-enter {
+  animation: drive-enter-rise 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.drive-enter-1 {
+  animation-delay: 0.05s;
+}
+
+.drive-enter-2 {
+  animation-delay: 0.2s;
+}
+
+.drive-enter-3 {
+  animation-delay: 0.32s;
+}
+
+@keyframes drive-enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drive-enter,
+  .drive-card-present,
+  .drive-bg__softbox--live,
+  .drive-card__sweep {
+    animation: none !important;
+  }
+
+  .drive-card-tilt--live,
+  .drive-bg--parallax .drive-bg__softbox,
+  .drive-bg--parallax .drive-bg__halo {
+    transform: none !important;
+  }
+
+  .drive-portrait,
+  .drive-identity,
+  .drive-card__badge {
+    transform: none !important;
+  }
+}
+
+/* ?? Studio environment ?? */
+
+.drive-bg__base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(95% 70% at 50% 18%, #1a222a 0%, transparent 58%),
+    linear-gradient(180deg, #0d1116 0%, #07090b 46%, #040506 100%);
+}
+
+.drive-bg__key {
+  position: absolute;
+  left: -15%;
+  top: -25%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(220 228 236 / 0.11),
+    transparent 68%
+  );
+  filter: blur(8px);
+}
+
+.drive-bg__softbox {
+  position: absolute;
+  left: 50%;
+  top: -22%;
+  width: 150%;
+  height: 58%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    rgb(230 236 242 / 0.16) 0%,
+    rgb(180 190 200 / 0.05) 42%,
+    transparent 70%
+  );
+}
+
+.drive-bg__softbox--live {
+  animation: drive-softbox-breathe 14s ease-in-out infinite alternate;
+}
+
+.drive-bg--parallax .drive-bg__softbox {
+  transform: translateX(calc(-50% + (var(--dim-lx, 0.5) - 0.5) * -2.2%))
+    translateY(calc((var(--dim-ly, 0.36) - 0.36) * -1.4%));
+}
+
+.drive-bg--parallax .drive-bg__halo {
+  transform: translate(
+    calc((var(--dim-lx, 0.5) - 0.5) * -1.6%),
+    calc((var(--dim-ly, 0.36) - 0.36) * -1.1%)
+  );
+}
+
+@keyframes drive-softbox-breathe {
+  from {
+    opacity: 0.88;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.drive-bg__fill {
+  position: absolute;
+  right: -18%;
+  top: 12%;
+  width: 55%;
+  height: 50%;
+  background: radial-gradient(
+    ellipse at 40% 40%,
+    rgb(120 150 175 / 0.07),
+    transparent 70%
+  );
+}
+
+.drive-bg__halo {
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  width: min(92vw, 42rem);
+  height: 22rem;
+  transform: translate(-50%, -40%);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--drive-champagne) 10%, transparent),
+    transparent 68%
+  );
+  opacity: 0.7;
+}
+
+.drive-bg__champagne {
+  position: absolute;
+  right: -12%;
+  bottom: 4%;
+  width: 65%;
+  height: 48%;
+  background: radial-gradient(
+    ellipse at 35% 45%,
+    color-mix(in srgb, var(--brand-accent, #c9a962) 18%, transparent),
+    transparent 72%
+  );
+  opacity: 0.5;
+}
+
+.drive-bg__floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgb(0 0 0 / 0.42) 55%,
+    rgb(0 0 0 / 0.78)
+  );
+}
+
+.drive-bg__floor-gloss {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 6%;
+  height: 18%;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgb(255 255 255 / 0.045),
+    transparent 70%
+  );
+  filter: blur(10px);
+  opacity: 0.7;
+}
+
+.drive-bg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    transparent 28%,
+    rgb(0 0 0 / 0.58) 100%
+  );
+}
+
+/* ?? Hero card ?? */
+
+.drive-identity-stage {
+  perspective: 1400px;
+  padding-bottom: 1.1rem;
+}
+
+.drive-card-shadow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(calc(-50% + (var(--dim-ry, 0) * 0.4px)));
+}
+
+.drive-card-shadow--ambient {
+  width: 88%;
+  bottom: -1.35rem;
+  height: 2.4rem;
+  background: rgb(0 0 0 / 0.55);
+  filter: blur(22px);
+}
+
+.drive-card-shadow--contact {
+  width: 62%;
+  bottom: -0.55rem;
+  height: 1.15rem;
+  background: rgb(0 0 0 / 0.72);
+  filter: blur(10px);
+}
+
+.drive-card-shadow--bounce {
+  width: 70%;
+  bottom: -0.2rem;
+  height: 0.85rem;
+  background: color-mix(in srgb, var(--drive-champagne) 22%, transparent);
+  filter: blur(14px);
+  opacity: 0.35;
+}
+
+.drive-card-scene {
+  position: relative;
+  z-index: 1;
+}
+
+.drive-card-present {
+  animation: drive-card-settle 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.drive-card-present--static {
+  animation: none;
+}
+
+@keyframes drive-card-settle {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.978);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.drive-card-tilt {
+  transform-style: preserve-3d;
+}
+
+.drive-card-tilt--live {
+  transform: rotateX(calc(var(--dim-rx, 0) * 1deg))
+    rotateY(calc(var(--dim-ry, 0) * 1deg));
+  will-change: transform;
+}
+
+.drive-card {
+  position: relative;
+  border-radius: 1.2rem;
+  transform-style: preserve-3d;
+}
+
+.drive-card__underside {
+  position: absolute;
+  inset: 0.55rem 0.15rem -0.55rem 0.15rem;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #05070a, #12161c);
+  box-shadow:
+    0 28px 48px -20px rgb(0 0 0 / 0.9),
+    0 12px 22px -12px rgb(0 0 0 / 0.7);
+  transform: translateZ(-14px);
+}
+
+.drive-card__depth {
+  position: absolute;
+  inset: 0.28rem -0.12rem -0.32rem 0.12rem;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #06080b 0%,
+      #151a20 35%,
+      #0c1014 100%
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.03),
+    0 18px 36px -16px rgb(0 0 0 / 0.85);
+  transform: translateZ(-7px);
+}
+
+.drive-card__edge {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--drive-rim) 38%, transparent),
+    0 1px 0 color-mix(in srgb, var(--drive-champagne) 28%, transparent),
+    0 -1px 0 rgb(0 0 0 / 0.55);
+  transform: translateZ(1px);
+  opacity: calc(
+    0.75 + abs(var(--dim-ry, 0)) * 0.04 + abs(var(--dim-rx, 0)) * 0.03
+  );
+}
+
+.drive-card__body {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  padding: 1.15rem 1.15rem 1.05rem;
+  min-height: 11.5rem;
+  transform: translateZ(0);
+  background: var(--drive-graphite-deep);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 -1px 0 rgb(0 0 0 / 0.55),
+    inset 1px 0 0 rgb(255 255 255 / 0.03),
+    inset -1px 0 0 rgb(0 0 0 / 0.35);
+}
+
+.drive-card__base {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      148deg,
+      #2e373f 0%,
+      #1a2128 28%,
+      #12171d 58%,
+      #0b0e12 100%
+    );
+  pointer-events: none;
+}
+
+.drive-card__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.drive-card__falloff {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      90% 80% at calc(var(--dim-lx, 0.42) * 100%) calc(var(--dim-ly, 0.32) * 100%),
+      rgb(255 255 255 / 0.07),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.035) 0%,
+      transparent 35%,
+      rgb(0 0 0 / 0.28) 100%
+    );
+  pointer-events: none;
+}
+
+.drive-card__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--drive-champagne) 26%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--drive-champagne) 42%, transparent),
+    inset 0 -1px 0 rgb(0 0 0 / 0.42),
+    inset 0 0 24px rgb(0 0 0 / 0.18);
+}
+
+.drive-card__badge {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 0.45rem;
+  min-height: 3.75rem;
+  align-items: center;
+  transform: translate3d(
+    calc((var(--dim-px, 0.5) - 0.5) * -4px),
+    calc((var(--dim-py, 0.5) - 0.5) * -3px),
+    20px
+  );
+}
+
+.drive-card__badge-logo {
+  width: auto;
+  height: 3.15rem;
+  max-width: min(72%, 12.5rem);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.45));
+}
+
+.drive-card__layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(6.25rem, 36%) 1fr;
+  gap: 1.05rem;
+  align-items: center;
+  min-height: 8.25rem;
+}
+
+.drive-portrait {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: #0c0f13;
+  transform: translate3d(
+    calc((var(--dim-px, 0.5) - 0.5) * -7px),
+    calc((var(--dim-py, 0.5) - 0.5) * -5px),
+    18px
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 52%, transparent),
+    0 14px 28px -14px rgb(0 0 0 / 0.8),
+    inset 0 0 0 1px rgb(0 0 0 / 0.35);
+}
+
+.drive-portrait__well {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #1a2027, #090c10);
+  box-shadow: inset 0 8px 18px rgb(0 0 0 / 0.45);
+}
+
+.drive-portrait__img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: saturate(0.94) contrast(1.05);
+}
+
+.drive-portrait__grade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    185deg,
+    transparent 42%,
+    rgb(6 8 10 / 0.5) 100%
+  );
+  pointer-events: none;
+}
+
+.drive-portrait__coat {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    125deg,
+    rgb(255 255 255 / 0.08) 0%,
+    transparent 38%,
+    transparent 70%,
+    rgb(0 0 0 / 0.12) 100%
+  );
+  pointer-events: none;
+}
+
+.drive-portrait__rim {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--drive-champagne) 45%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  pointer-events: none;
+}
+
+.drive-monogram {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(
+      circle at 32% 24%,
+      color-mix(in srgb, var(--drive-champagne) 18%, transparent),
+      transparent 52%
+    ),
+    linear-gradient(155deg, #222a32 0%, #12171d 48%, #0a0d11 100%);
+}
+
+.drive-monogram__inset {
+  position: absolute;
+  inset: 0.45rem;
+  border-radius: 0.55rem;
+  box-shadow:
+    inset 0 3px 10px rgb(0 0 0 / 0.55),
+    inset 0 -1px 0 rgb(255 255 255 / 0.04),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 16%, transparent);
+  background: linear-gradient(160deg, #171c22, #0c0f13);
+}
+
+.drive-monogram__shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    118deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.07) 48%,
+    transparent 62%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.drive-monogram__glyph {
+  position: relative;
+  z-index: 1;
+  font-family: var(--brand-heading-font);
+  font-size: clamp(1.85rem, 7vw, 2.35rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--drive-champagne);
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 0.65),
+    0 0 18px color-mix(in srgb, var(--drive-champagne) 22%, transparent);
+}
+
+.drive-identity {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  padding-right: 0.1rem;
+  transform: translate3d(
+    calc((var(--dim-px, 0.5) - 0.5) * -3px),
+    calc((var(--dim-py, 0.5) - 0.5) * -2px),
+    14px
+  );
+}
+
+.drive-name {
+  margin: 0;
+  font-family: var(--brand-heading-font);
+  font-size: clamp(1.35rem, 5.2vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--drive-champagne);
+  text-wrap: balance;
+}
+
+.drive-title {
+  margin: 0.55rem 0 0;
+  font-family: var(--brand-body-font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(236 240 244 / 0.84);
+}
+
+.drive-location {
+  margin: 0.4rem 0 0;
+  font-family: var(--brand-body-font);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(168 176 184 / 0.78);
+}
+
+.drive-marques {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin: 1.05rem 0 0;
+  padding: 0.85rem 0.2rem 0.15rem;
+  list-style: none;
+  border-top: 1px solid color-mix(in srgb, var(--drive-champagne) 16%, transparent);
+}
+
+.drive-marque {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 1.5rem;
+  opacity: 0.9;
+}
+
+.drive-marque__logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* Official marks ? light monochrome partner badging */
+  filter: grayscale(1) brightness(0) invert(1) opacity(0.78);
+}
+
+.drive-marque__text {
+  font-family: var(--brand-heading-font);
+  font-size: clamp(0.55rem, 2.5vw, 0.68rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(220 226 232 / 0.86);
+  white-space: nowrap;
+}
+
+/* Broad softbox reflection ? visible statically; light tracks independently */
+.drive-card__softbox {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(
+    120% 70% at calc(var(--dim-lx, 0.42) * 100%) calc(var(--dim-ly, 0.32) * 80%),
+    rgb(255 255 255 / calc(0.11 + var(--drive-reflect, 0.6) * 0.08)),
+    rgb(255 255 255 / 0.03) 38%,
+    transparent 62%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.95;
+}
+
+.drive-card__specular {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 4;
+  background: linear-gradient(
+    calc(108deg + (var(--dim-lx, 0.42) - 0.5) * 36deg),
+    transparent 26%,
+    rgb(255 255 255 / calc(0.045 + var(--drive-reflect, 0.6) * 0.05)) 44%,
+    transparent 54%,
+    transparent 68%,
+    color-mix(
+        in srgb,
+        var(--drive-champagne) calc(8% + var(--drive-reflect, 0.6) * 6%),
+        transparent
+      )
+      78%,
+    transparent 88%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.drive-card__sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 5;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgb(255 255 255 / 0.14) 48%,
+    transparent 62%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  animation: drive-sweep-once 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.28s 1 both;
+}
+
+.drive-card__sweep--off {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes drive-sweep-once {
+  0% {
+    opacity: 0;
+    transform: translateX(-28%);
+  }
+  22% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(34%);
+  }
+}
+
+.drive-card__clearcoat {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.07) 0%,
+    transparent 26%,
+    transparent 70%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+}
+
+/* ?? Action console ?? */
+
+.drive-dock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.drive-dock__save {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.15rem;
+  padding: 0.8rem 1.15rem;
+  border-radius: 0.9rem;
+  font-family: var(--brand-heading-font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #16120c;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--drive-champagne) 88%, #fff) 0%,
+      var(--drive-champagne) 42%,
+      var(--drive-champagne-deep) 100%
+    );
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.38) inset,
+    0 -1px 0 rgb(0 0 0 / 0.22) inset,
+    0 12px 26px -14px color-mix(in srgb, var(--drive-champagne) 55%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne-deep) 55%, #000);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+}
+
+.drive-dock__save::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.22) 0%,
+    transparent 38%
+  );
+  opacity: 0.55;
+}
+
+.drive-dock__save:hover {
+  filter: brightness(1.04);
+}
+
+.drive-dock__save:active {
+  transform: translateY(1.5px) scale(0.991);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.18) inset,
+    0 4px 12px -8px color-mix(in srgb, var(--drive-champagne) 40%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne-deep) 55%, #000);
+}
+
+.drive-dock__save--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.drive-console {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.65rem;
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 40%),
+    linear-gradient(165deg, #151a20, #0b0e12);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 -1px 0 rgb(0 0 0 / 0.45),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 14%, transparent),
+    0 16px 32px -22px rgb(0 0 0 / 0.85);
+}
+
+.drive-console__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--drive-champagne) 10%, transparent);
+}
+
+.drive-dock__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.drive-dock__grid--secondary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.drive-dock__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 3.45rem;
+  padding: 0.5rem 0.3rem;
+  border: 0;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--drive-champagne);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 44%),
+    linear-gradient(165deg, #1c232b, #10151a);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.09),
+    inset 0 -1px 0 rgb(0 0 0 / 0.5),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 16%, transparent),
+    0 6px 12px -10px rgb(0 0 0 / 0.75);
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    background 0.14s ease;
+}
+
+@media (hover: hover) {
+  .drive-dock__btn:hover {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      inset 0 -1px 0 rgb(0 0 0 / 0.45),
+      0 0 0 1px color-mix(in srgb, var(--drive-champagne) 28%, transparent),
+      0 0 18px -10px color-mix(in srgb, var(--drive-champagne) 35%, transparent);
+  }
+}
+
+.drive-dock__btn span {
+  font-family: var(--brand-body-font);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgb(214 220 226 / 0.8);
+}
+
+.drive-dock__btn:active {
+  transform: translateY(1.5px);
+  box-shadow:
+    inset 0 3px 8px rgb(0 0 0 / 0.42),
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 20%, transparent);
+}
+
+.drive-tagline {
+  margin: 0.1rem 0 0;
+  font-family: var(--brand-body-font);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: rgb(160 168 176 / 0.55);
+}
+
+.drive-tagline strong {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--drive-champagne) 72%, #eee);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ?? QR modal ?? */
+
+.drive-qr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.drive-qr-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(0 0 0 / 0.72);
+  cursor: pointer;
+}
+
+.drive-qr-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 20rem);
+  padding: 1.15rem;
+  border-radius: 1rem;
+  background: linear-gradient(165deg, #1a2026, #0d1014);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 22%, transparent),
+    0 24px 48px -16px rgb(0 0 0 / 0.75);
+}
+
+.drive-qr-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.drive-qr-modal__title {
+  margin: 0;
+  font-family: var(--brand-heading-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--drive-champagne);
+}
+
+.drive-qr-modal__close {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  color: rgb(220 224 228 / 0.8);
+  background: rgb(255 255 255 / 0.06);
+  cursor: pointer;
+}
+
+.drive-qr-modal__code {
+  display: grid;
+  place-items: center;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.drive-qr-modal__link {
+  display: block;
+  margin-top: 0.85rem;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--drive-champagne) 80%, #fff);
+}
+
+@media (max-width: 360px) {
+  .drive-card__layout {
+    grid-template-columns: minmax(5.25rem, 34%) 1fr;
+    gap: 0.8rem;
+  }
+
+  .drive-card__body {
+    padding: 1rem 0.95rem 0.95rem;
+    min-height: 10.5rem;
+  }
+
+  .drive-card__badge-logo {
+    height: 2.85rem;
+    max-width: min(78%, 11rem);
+  }
+
+  .drive-dock__grid {
+    gap: 0.35rem;
+  }
+
+  .drive-dock__btn {
+    min-height: 3.2rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .drive-card__body {
+    padding: 1.35rem 1.4rem 1.2rem;
+    min-height: 13.5rem;
+  }
+
+  .drive-card__badge-logo {
+    height: 3.55rem;
+    max-width: min(70%, 14rem);
+  }
+
+  .drive-card__layout {
+    min-height: 9.5rem;
+    gap: 1.25rem;
+  }
+
+  .drive-name {
+    font-size: 2rem;
+  }
+
+  .drive-title {
+    font-size: 0.76rem;
+  }
+
+  .drive-monogram__glyph {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .drive-card__body {
+    padding: 1.5rem 1.55rem 1.3rem;
+  }
+
+  .drive-name {
+    font-size: 2.15rem;
+  }
+}
+/* ?? Drive marque personalities (shared engine) ?? */
+
+.drive-group-context {
+  margin: 0.45rem 0 0;
+  font-family: var(--brand-body-font);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--drive-champagne) 55%, rgb(160 168 176 / 0.75));
+}
+
+.drive-card__badge-logo--mark {
+  height: 3.35rem;
+  max-width: min(64%, 11rem);
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.45));
+}
+
+.drive-shell[data-marque="geely"] {
+  --drive-graphite: #0e1822;
+  --drive-graphite-mid: #16324a;
+  --drive-graphite-deep: #050a10;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 45%, #7aa0b8);
+}
+
+.drive-shell[data-marque="geely"] .drive-card__base {
+  background: linear-gradient(148deg, #1a2f42 0%, #0e1a26 40%, #070d14 100%);
+}
+
+.drive-shell[data-marque="geely"] .drive-bg__halo {
+  background: radial-gradient(ellipse at 50% 50%, rgb(111 168 201 / 0.14), transparent 68%);
+}
+
+.drive-shell[data-marque="geely"] .drive-dock__save {
+  color: #061018;
+}
+
+.drive-shell[data-marque="jetour"] {
+  --drive-graphite: #121212;
+  --drive-graphite-mid: #1c1c1c;
+  --drive-graphite-deep: #050505;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 55%, #8a5a30);
+}
+
+.drive-shell[data-marque="jetour"] .drive-card__base {
+  background: linear-gradient(148deg, #2a2118 0%, #14110e 42%, #080706 100%);
+}
+
+.drive-shell[data-marque="jetour"] .drive-bg__champagne {
+  opacity: 0.62;
+}
+
+.drive-shell[data-marque="mg"] {
+  --drive-graphite: #141414;
+  --drive-graphite-mid: #1c1c1c;
+  --drive-graphite-deep: #070707;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 40%, #8a2020);
+}
+
+.drive-shell[data-marque="mg"] .drive-card__base {
+  background: linear-gradient(148deg, #2a1818 0%, #151010 40%, #090707 100%);
+}
+
+.drive-shell[data-marque="mg"] .drive-portrait {
+  border-radius: 0.55rem;
+}
+
+.drive-shell[data-marque="mg"] .drive-card {
+  border-radius: 0.85rem;
+}
+
+.drive-shell[data-marque="mg"] .drive-bg__halo {
+  background: radial-gradient(ellipse at 50% 50%, rgb(221 29 33 / 0.12), transparent 68%);
+}
+
+.drive-shell[data-marque="jac"] {
+  --drive-graphite: #161210;
+  --drive-graphite-mid: #241a16;
+  --drive-graphite-deep: #080606;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 42%, #7a1010);
+}
+
+.drive-shell[data-marque="jac"] .drive-card__base {
+  background: linear-gradient(148deg, #2c1814 0%, #18110e 42%, #0a0706 100%);
+}
+
+.drive-shell[data-marque="jac"] .drive-bg__halo {
+  background: radial-gradient(ellipse at 50% 50%, rgb(204 0 13 / 0.11), transparent 68%);
+}
+
+.drive-shell[data-marque="jac"] .drive-dock__save {
+  color: #1a0808;
+}
+
+/* Marque logos ? local approved copies */
+.drive-shell[data-marque="geely"] .drive-card__badge-logo {
+  height: 4.25rem;
+  max-width: min(94%, 24rem);
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.45));
+}
+
+.drive-shell[data-marque="jetour"] .drive-card__badge-logo {
+  height: 4.25rem;
+  width: auto;
+  max-width: min(94%, 24rem);
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.45));
+}
+
+.drive-shell[data-marque="jetour"] .drive-card__badge-wordmark {
+  margin: 0;
+  color: #f7f3ee;
+  font-family: var(--brand-heading-font);
+  font-size: clamp(1.65rem, 5.5vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  line-height: 1;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  text-shadow: 0 6px 18px rgb(0 0 0 / 0.45);
+}
+
+.drive-shell[data-marque="mg"] .drive-card__badge-logo--mark {
+  height: 3.85rem;
+  max-width: min(42%, 8.5rem);
+}
+
+.drive-shell[data-marque="jac"] .drive-card__badge-logo--mark {
+  height: 4.75rem;
+  max-width: min(92%, 18rem);
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.45));
+}
+
+@media (min-width: 640px) {
+  .drive-shell[data-marque="geely"] .drive-card__badge-logo {
+    height: 5.15rem;
+    max-width: min(94%, 28rem);
+  }
+
+  .drive-shell[data-marque="jetour"] .drive-card__badge-logo {
+    height: 5.15rem;
+    max-width: min(94%, 28rem);
+  }
+
+  .drive-shell[data-marque="mg"] .drive-card__badge-logo--mark {
+    height: 4.35rem;
+  }
+
+  .drive-shell[data-marque="jac"] .drive-card__badge-logo--mark {
+    height: 5.5rem;
+  }
+}

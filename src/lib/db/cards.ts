@@ -20,6 +20,11 @@ import {
   type PublicCardResolution,
 } from "@/lib/cards/resolve-public";
 import type { PublicCardViewModel } from "@/types/card";
+import {
+  getDriveMarqueConfig,
+  resolveDriveMarqueId,
+  type DriveMarqueId,
+} from "@/lib/experience/drive-marque";
 import { z } from "zod";
 
 const slugSchema = z
@@ -131,6 +136,12 @@ export async function getCardPreviewForAdmin(params: {
         : Promise.resolve({ data: null }),
     ]);
 
+  const marques = await loadEmployeeMarques(supabase, {
+    employeeId: employee.id,
+    locationId: employee.location_id,
+    primaryBrandId: employee.brand_id,
+  });
+
   let brandKit = null;
   if (brand?.brand_kit_id) {
     const { data } = await supabase
@@ -194,6 +205,7 @@ export async function getCardPreviewForAdmin(params: {
           website: location.website,
         }
       : null,
+    marques,
     organisation_kit: orgKit,
     brand_kit: brandKit,
     card_kit: null,
@@ -209,22 +221,100 @@ export async function getCardPreviewForAdmin(params: {
   return payload ? toPublicCardViewModel(payload) : null;
 }
 
+type MarqueRow = {
+  id: string;
+  name: string;
+  slug: string;
+  website: string | null;
+  logo_url: string | null;
+};
+
+async function loadEmployeeMarques(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  params: {
+    employeeId: string;
+    locationId: string | null;
+    primaryBrandId: string | null;
+  },
+): Promise<MarqueRow[]> {
+  type Linked = {
+    brand_id: string;
+    sort_order: number;
+    brand: MarqueRow | null;
+  };
+
+  const { data: employeeLinks } = await supabase
+    .from("employee_brands")
+    .select("brand_id, sort_order, brand:brands(id, name, slug, website, logo_url)")
+    .eq("employee_id", params.employeeId)
+    .order("sort_order", { ascending: true });
+
+  const fromEmployee = ((employeeLinks ?? []) as unknown as Linked[])
+    .map((row) => row.brand)
+    .filter((brand): brand is MarqueRow => Boolean(brand));
+
+  let fromLocation: MarqueRow[] = [];
+  if (fromEmployee.length === 0 && params.locationId) {
+    const { data: locationLinks } = await supabase
+      .from("location_brands")
+      .select("brand_id, sort_order, brand:brands(id, name, slug, website, logo_url)")
+      .eq("location_id", params.locationId)
+      .order("sort_order", { ascending: true });
+
+    fromLocation = ((locationLinks ?? []) as unknown as Linked[])
+      .map((row) => row.brand)
+      .filter((brand): brand is MarqueRow => Boolean(brand));
+  }
+
+  const map = new Map<string, MarqueRow>();
+  for (const marque of fromEmployee.length > 0 ? fromEmployee : fromLocation) {
+    map.set(marque.id, marque);
+  }
+
+  if (params.primaryBrandId && !map.has(params.primaryBrandId)) {
+    const { data: primary } = await supabase
+      .from("brands")
+      .select("id, name, slug, website, logo_url")
+      .eq("id", params.primaryBrandId)
+      .maybeSingle();
+    if (primary) map.set(primary.id, primary);
+  }
+
+  return [...map.values()];
+}
+
+export type CardListItem = Card & {
+  employee: (Pick<
+    Employee,
+    | "id"
+    | "first_name"
+    | "last_name"
+    | "display_name"
+    | "job_title"
+    | "brand_id"
+    | "location_id"
+    | "employee_reference"
+  > & {
+    location: { id: string; name: string; slug: string } | null;
+    brand: { id: string; name: string; slug: string } | null;
+    marques: { id: string; name: string; slug: string }[];
+  }) | null;
+};
+
 export async function listCards(
   organisationId: string,
   options?: { includeArchived?: boolean },
-): Promise<
-  (Card & {
-    employee: Pick<
-      Employee,
-      "id" | "first_name" | "last_name" | "display_name" | "job_title"
-    > | null;
-  })[]
-> {
+): Promise<CardListItem[]> {
   const supabase = await createClient();
   let query = supabase
     .from("cards")
     .select(
-      "*, employee:employees(id, first_name, last_name, display_name, job_title)",
+      `*, employee:employees(
+        id, first_name, last_name, display_name, job_title,
+        brand_id, location_id, employee_reference,
+        location:locations!employees_location_id_fkey(id, name, slug),
+        brand:brands!employees_brand_id_fkey(id, name, slug)
+      )`,
     )
     .eq("organisation_id", organisationId)
     .order("updated_at", { ascending: false });
@@ -235,12 +325,59 @@ export async function listCards(
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return (data ?? []) as (Card & {
-    employee: Pick<
-      Employee,
-      "id" | "first_name" | "last_name" | "display_name" | "job_title"
-    > | null;
-  })[];
+
+  const normalized: CardListItem[] = (
+    (data ?? []) as unknown as Array<
+      Card & {
+        employee: (Omit<NonNullable<CardListItem["employee"]>, "marques"> & {
+          marques?: never;
+        }) | null;
+      }
+    >
+  ).map((card) => ({
+    ...card,
+    employee: card.employee
+      ? {
+          ...card.employee,
+          marques: [] as { id: string; name: string; slug: string }[],
+        }
+      : null,
+  }));
+
+  const employeeIds = normalized
+    .map((c) => c.employee?.id)
+    .filter(Boolean) as string[];
+
+  if (employeeIds.length === 0) return normalized;
+
+  const { data: links } = await supabase
+    .from("employee_brands")
+    .select("employee_id, brand:brands(id, name, slug)")
+    .in("employee_id", employeeIds);
+
+  type LinkRow = {
+    employee_id: string;
+    brand: { id: string; name: string; slug: string } | null;
+  };
+  const marquesByEmployee = new Map<string, { id: string; name: string; slug: string }[]>();
+  for (const row of (links ?? []) as unknown as LinkRow[]) {
+    if (!row.brand) continue;
+    const list = marquesByEmployee.get(row.employee_id) ?? [];
+    list.push(row.brand);
+    marquesByEmployee.set(row.employee_id, list);
+  }
+
+  return normalized.map((card) => {
+    if (!card.employee) return card;
+    const marques = marquesByEmployee.get(card.employee.id) ?? [];
+    return {
+      ...card,
+      employee: {
+        ...card.employee,
+        marques,
+      },
+    };
+  });
 }
 
 export async function getCardByEmployee(
@@ -425,4 +562,81 @@ export async function updateCardSettings(input: {
   }
 
   return data;
+}
+
+const DEMO_EMPLOYEE_REFS = [
+  "demo-agg-group",
+  "demo-geely",
+  "demo-jetour",
+  "demo-mg",
+  "demo-jac",
+] as const;
+
+/**
+ * Admin pitch helpers — draft demo cards keyed by employee_reference.
+ */
+export async function listDriveDemoPreviewSiblings(
+  organisationId: string,
+): Promise<
+  Array<{
+    cardId: string;
+    label: string;
+    marqueId: import("@/lib/experience/drive-marque").DriveMarqueId;
+  }>
+> {
+  const supabase = await createClient();
+  const { data: employees, error } = await supabase
+    .from("employees")
+    .select("id, employee_reference")
+    .eq("organisation_id", organisationId)
+    .in("employee_reference", [...DEMO_EMPLOYEE_REFS]);
+
+  if (error || !employees?.length) return [];
+
+  const employeeIds = employees.map((e) => e.id);
+  const { data: cards } = await supabase
+    .from("cards")
+    .select("id, employee_id")
+    .eq("organisation_id", organisationId)
+    .in("employee_id", employeeIds);
+
+  if (!cards?.length) return [];
+
+  const { data: links } = await supabase
+    .from("employee_brands")
+    .select("employee_id, brand:brands(slug)")
+    .in("employee_id", employeeIds);
+
+  type LinkRow = {
+    employee_id: string;
+    brand: { slug: string } | null;
+  };
+  const marquesByEmployee = new Map<string, { slug: string }[]>();
+  for (const row of (links ?? []) as unknown as LinkRow[]) {
+    if (!row.brand) continue;
+    const list = marquesByEmployee.get(row.employee_id) ?? [];
+    list.push(row.brand);
+    marquesByEmployee.set(row.employee_id, list);
+  }
+
+  const byEmployee = new Map(employees.map((e) => [e.id, e]));
+  const siblings: Array<{
+    cardId: string;
+    label: string;
+    marqueId: DriveMarqueId;
+  }> = [];
+
+  for (const card of cards) {
+    const employee = byEmployee.get(card.employee_id);
+    if (!employee) continue;
+    const marques = marquesByEmployee.get(card.employee_id) ?? [];
+    const marqueId = resolveDriveMarqueId(marques);
+    siblings.push({
+      cardId: card.id,
+      label: getDriveMarqueConfig(marqueId).label.replace(" Motors", ""),
+      marqueId,
+    });
+  }
+
+  return siblings;
 }

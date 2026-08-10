@@ -4,6 +4,7 @@ import {
   canAccessPlatformAdmin,
   canManageOrganisation,
   getPrimaryOrganisationId,
+  resolveActiveOrganisationId,
 } from "@/lib/permissions/tenancy";
 
 const orgA = "org-a";
@@ -94,6 +95,47 @@ describe("tenant permission helpers", () => {
           created_at: "2026-01-01T00:00:00Z",
         },
       ]),
+    ).toBe(orgA);
+  });
+
+  it("lets platform admins override active organisation", () => {
+    const memberships = [
+      {
+        organisation_id: orgA,
+        created_at: "2026-01-01T00:00:00Z",
+      },
+    ];
+
+    expect(
+      resolveActiveOrganisationId({
+        memberships,
+        isPlatformAdmin: true,
+        preferredOrganisationId: orgB,
+      }),
+    ).toBe(orgB);
+
+    expect(
+      resolveActiveOrganisationId({
+        memberships,
+        isPlatformAdmin: false,
+        preferredOrganisationId: orgB,
+      }),
+    ).toBe(orgA);
+  });
+
+  it("ignores preferred org outside the allowed list for platform admins", () => {
+    expect(
+      resolveActiveOrganisationId({
+        memberships: [
+          {
+            organisation_id: orgA,
+            created_at: "2026-01-01T00:00:00Z",
+          },
+        ],
+        isPlatformAdmin: true,
+        preferredOrganisationId: orgB,
+        allowedOrganisationIds: [orgA],
+      }),
     ).toBe(orgA);
   });
 });

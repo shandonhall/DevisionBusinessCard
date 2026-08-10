@@ -91,6 +91,19 @@ export function BrandsManager({
           />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="logoUrl">Logo URL (local path)</Label>
+          <Input
+            id="logoUrl"
+            name="logoUrl"
+            placeholder="/brands/marques/geely.png"
+            defaultValue={editing?.logo_url ?? ""}
+          />
+          <p className="text-xs text-[var(--brand-muted-text)]">
+            Prefer approved files under /public/brands. Drive presets also
+            ship marque logos for card rendering.
+          </p>
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
           <select
             id="status"
@@ -145,7 +158,13 @@ export function BrandsManager({
                 <p className="font-medium">{brand.name}</p>
                 <p className="text-sm text-[var(--brand-muted-text)]">
                   /{brand.slug} · {brand.status}
+                  {brand.website ? ` · ${brand.website}` : ""}
                 </p>
+                {brand.logo_url ? (
+                  <p className="truncate text-xs text-[var(--brand-muted-text)]">
+                    {brand.logo_url}
+                  </p>
+                ) : null}
               </div>
               <Button
                 type="button"

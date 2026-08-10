@@ -59,6 +59,7 @@ export async function createBrand(input: unknown): Promise<Brand> {
       name: parsed.name,
       slug: parsed.slug,
       website: parsed.website || null,
+      logo_url: parsed.logoUrl || null,
       status: parsed.status,
     })
     .select("*")
@@ -117,6 +118,7 @@ export async function updateBrand(input: unknown): Promise<Brand> {
       name: parsed.name,
       slug: parsed.slug,
       website: parsed.website || null,
+      logo_url: parsed.logoUrl || null,
       status: parsed.status,
     })
     .eq("id", parsed.brandId)

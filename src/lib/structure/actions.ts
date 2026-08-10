@@ -62,6 +62,7 @@ export async function createBrandAction(
       name: formData.get("name"),
       slug: formData.get("slug"),
       website: formData.get("website"),
+      logoUrl: formData.get("logoUrl"),
       status: formData.get("status") || "active",
     });
   });
@@ -79,6 +80,7 @@ export async function updateBrandAction(
       name: formData.get("name"),
       slug: formData.get("slug"),
       website: formData.get("website"),
+      logoUrl: formData.get("logoUrl"),
       status: formData.get("status") || "active",
     });
   });

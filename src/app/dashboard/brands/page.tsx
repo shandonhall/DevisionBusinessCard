@@ -30,8 +30,11 @@ export default async function BrandsPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Brands</h1>
           <p className="text-[var(--brand-muted-text)]">
-            Manage brands under {organisation.name}. Each brand can have its
-            own locations and employees.
+            Vehicle marques under {organisation.name} (AGG Motors, Geely,
+            Jetour, MG, JAC). Drive visual DNA for each marque is applied
+            automatically from employee marque assignments — edit name,
+            website, and logo path here; advanced material/lighting stays in
+            the Drive marque presets.
           </p>
         </div>
         <BrandsManager organisationId={organisation.id} brands={brands} />

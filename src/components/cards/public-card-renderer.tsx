@@ -20,9 +20,25 @@ const InteractiveCardExperience = dynamic(
   },
 );
 
+const DriveCardExperience = dynamic(
+  () =>
+    import("@/components/experience/drive/drive-experience").then(
+      (m) => m.DriveCardExperience,
+    ),
+  {
+    loading: () => (
+      <div
+        className="min-h-screen"
+        style={{ background: "#07090b" }}
+        aria-busy
+      />
+    ),
+  },
+);
+
 /**
  * Single entry point for public + preview rendering.
- * Experience presets (e.g. dimension) take priority over legacy layout ids.
+ * Experience presets (dimension / drive) take priority over legacy layout ids.
  */
 export function PublicCardRenderer({
   model,
@@ -31,7 +47,15 @@ export function PublicCardRenderer({
   model: PublicCardViewModel;
   absoluteCardUrl: string;
 }) {
-  if (model.brandDNA?.experience.preset === "dimension") {
+  const preset = model.brandDNA?.experience.preset;
+
+  if (preset === "drive") {
+    return (
+      <DriveCardExperience model={model} absoluteCardUrl={absoluteCardUrl} />
+    );
+  }
+
+  if (preset === "dimension") {
     return (
       <InteractiveCardExperience
         model={model}

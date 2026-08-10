@@ -4,6 +4,11 @@ import {
   type DesignTokens,
 } from "@/lib/branding/tokens";
 import { resolveBrandDNA } from "@/lib/experience/resolve";
+import {
+  applyDriveMarqueToTokens,
+  getDriveMarqueConfig,
+  resolveDriveMarqueId,
+} from "@/lib/experience/drive-marque";
 import type { BrandKit, CardLayoutId, Json } from "@/types/database";
 import type { PublicCardSection, PublicCardViewModel } from "@/types/card";
 
@@ -56,6 +61,13 @@ type PublicCardRpcPayload = {
     email: string | null;
     website: string | null;
   } | null;
+  marques?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    website: string | null;
+    logo_url: string | null;
+  }> | null;
   organisation_kit: BrandKit | null;
   brand_kit: BrandKit | null;
   card_kit: BrandKit | null;
@@ -102,6 +114,48 @@ export function toPublicCardViewModel(
     payload.organisation_kit?.logo_url ||
     null;
 
+  const marques = (payload.marques ?? []).map((marque) => ({
+    id: marque.id,
+    name: marque.name,
+    slug: marque.slug,
+    website: marque.website,
+    logoUrl: marque.logo_url,
+  }));
+
+  let brandDNA = resolveBrandDNA({
+    tokens: {
+      ...tokens,
+      logoUrl,
+      layoutId,
+    },
+    organisationKit: payload.organisation_kit,
+    brandKit: payload.brand_kit,
+    cardKit: payload.card_kit,
+  });
+
+  let resolvedTokens = {
+    ...tokens,
+    logoUrl,
+    layoutId,
+  };
+
+  if (brandDNA.experience.preset === "drive") {
+    const driveMarque = resolveDriveMarqueId(marques);
+    const marqueConfig = getDriveMarqueConfig(driveMarque);
+    resolvedTokens = applyDriveMarqueToTokens(resolvedTokens, driveMarque);
+    brandDNA = {
+      ...brandDNA,
+      driveMarque,
+      tokens: resolvedTokens,
+      visual: { ...brandDNA.visual, ...marqueConfig.visual },
+      experience: {
+        ...brandDNA.experience,
+        ...marqueConfig.experience,
+        preset: "drive",
+      },
+    };
+  }
+
   return {
     organisation: {
       id: payload.organisation.id,
@@ -119,6 +173,7 @@ export function toPublicCardViewModel(
           logoUrl: payload.brand.logo_url,
         }
       : null,
+    marques,
     location: payload.location
       ? {
           id: payload.location.id,
@@ -157,21 +212,8 @@ export function toPublicCardViewModel(
       publicPath: `/${payload.organisation.slug}/${payload.card.slug}`,
     },
     sections: (payload.sections ?? []).filter((section) => section.enabled),
-    tokens: {
-      ...tokens,
-      logoUrl,
-      layoutId,
-    },
-    brandDNA: resolveBrandDNA({
-      tokens: {
-        ...tokens,
-        logoUrl,
-        layoutId,
-      },
-      organisationKit: payload.organisation_kit,
-      brandKit: payload.brand_kit,
-      cardKit: payload.card_kit,
-    }),
+    tokens: resolvedTokens,
+    brandDNA,
   };
 }
 

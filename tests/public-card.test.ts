@@ -48,6 +48,22 @@ const samplePayload = {
     logo_url: null,
   },
   location: null,
+  marques: [
+    {
+      id: "marque-geely",
+      name: "Geely",
+      slug: "geely",
+      website: null,
+      logo_url: null,
+    },
+    {
+      id: "marque-mg",
+      name: "MG",
+      slug: "mg",
+      website: null,
+      logo_url: null,
+    },
+  ],
   organisation_kit: {
     id: "kit-org",
     organisation_id: "org-1",
@@ -125,6 +141,7 @@ describe("public card resolver", () => {
     expect(view.tokens.logoUrl).toBe("https://example.com/logo.png");
     expect(view.brandDNA.tokens.primary).toBe("#AA0000");
     expect(view.brandDNA.experience.preset).toBeNull();
+    expect(view.marques.map((m) => m.slug)).toEqual(["geely", "mg"]);
     expect(assertPublicCardTenantMatch(view, "acme", "jane-doe")).toBe(true);
     expect(assertPublicCardTenantMatch(view, "other-org", "jane-doe")).toBe(
       false,

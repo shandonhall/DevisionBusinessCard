@@ -72,11 +72,29 @@ export const locationTypeSchema = z.enum([
   "team",
 ]);
 
+const optionalLogoPath = z.preprocess(
+  emptyToUndefined,
+  z
+    .string()
+    .trim()
+    .max(500)
+    .refine(
+      (value) =>
+        value.startsWith("/") ||
+        value.startsWith("https://") ||
+        value.startsWith("http://"),
+      "Use a local /public path or http(s) URL",
+    )
+    .optional()
+    .nullable(),
+);
+
 export const createBrandSchema = z.object({
   organisationId: z.string().uuid(),
   name: z.string().trim().min(2).max(120),
   slug: slugSchema,
   website: optionalHttpUrl,
+  logoUrl: optionalLogoPath,
   status: entityStatusSchema.default("active"),
 });
 

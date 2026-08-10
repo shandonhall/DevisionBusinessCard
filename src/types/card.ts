@@ -10,6 +10,14 @@ export type PublicCardSection = {
   config_json: Json;
 };
 
+export type PublicCardMarque = {
+  id: string;
+  name: string;
+  slug: string;
+  website: string | null;
+  logoUrl: string | null;
+};
+
 export type PublicCardViewModel = {
   organisation: {
     id: string;
@@ -25,6 +33,8 @@ export type PublicCardViewModel = {
     website: string | null;
     logoUrl: string | null;
   } | null;
+  /** Vehicle marques represented on this card (from employee/location assignments). */
+  marques: PublicCardMarque[];
   location: {
     id: string;
     name: string;

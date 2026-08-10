@@ -1,6 +1,7 @@
 import type { DesignTokens } from "@/lib/branding/tokens";
 import {
   dimensionVisualDNA,
+  driveVisualDNA,
   platformExperienceConfig,
   platformVisualDNA,
   presetExperienceConfig,
@@ -17,6 +18,7 @@ import type { Json } from "@/types/database";
 
 const PRESET_IDS: ExperiencePresetId[] = [
   "dimension",
+  "drive",
   "precision",
   "studio",
   "glass",
@@ -142,6 +144,8 @@ export function resolveBrandDNA(params: {
   let visual: BrandVisualDNA = { ...platformVisualDNA };
   if (experience.preset === "dimension") {
     visual = { ...dimensionVisualDNA };
+  } else if (experience.preset === "drive") {
+    visual = { ...driveVisualDNA };
   }
   visual = {
     ...visual,
@@ -164,6 +168,10 @@ export function shouldUseDimensionExperience(
   if (dna.experience.preset !== "dimension") return false;
   if (quality === "essential") return false;
   return true;
+}
+
+export function shouldUseDriveExperience(dna: BrandDNA): boolean {
+  return dna.experience.preset === "drive";
 }
 
 export function clamp01(n: number): number {

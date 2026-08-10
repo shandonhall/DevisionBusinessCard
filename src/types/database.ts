@@ -611,6 +611,78 @@ export type Database = {
           },
         ];
       };
+      location_brands: {
+        Row: {
+          location_id: string;
+          brand_id: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          location_id: string;
+          brand_id: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          location_id?: string;
+          brand_id?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "location_brands_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "location_brands_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      employee_brands: {
+        Row: {
+          employee_id: string;
+          brand_id: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          employee_id: string;
+          brand_id: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          employee_id?: string;
+          brand_id?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "employee_brands_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_brands_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -664,3 +736,7 @@ export type Card = Database["public"]["Tables"]["cards"]["Row"];
 export type CardSection = Database["public"]["Tables"]["card_sections"]["Row"];
 export type CardSlugRedirect =
   Database["public"]["Tables"]["card_slug_redirects"]["Row"];
+export type LocationBrand =
+  Database["public"]["Tables"]["location_brands"]["Row"];
+export type EmployeeBrand =
+  Database["public"]["Tables"]["employee_brands"]["Row"];

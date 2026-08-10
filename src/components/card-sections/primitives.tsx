@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { Globe, Mail, MessageCircle, Phone } from "lucide-react";
 import type { PublicCardViewModel } from "@/types/card";
 import { tokensToCssVars } from "@/lib/branding/tokens";
@@ -209,12 +209,13 @@ export function CardShell({
   children,
   className = "",
   style,
+  ...rest
 }: {
   model: PublicCardViewModel;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-}) {
+} & HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={`card-shell min-h-screen ${className}`}
@@ -225,6 +226,7 @@ export function CardShell({
         fontFamily: "var(--brand-body-font)",
         ...style,
       }}
+      {...rest}
     >
       {children}
     </div>

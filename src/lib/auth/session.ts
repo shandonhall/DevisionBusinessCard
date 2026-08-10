@@ -2,11 +2,12 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { readActiveOrganisationCookie } from "@/lib/auth/active-organisation";
 import {
   canAccessOrganisation,
   canAccessPlatformAdmin,
   canManageOrganisation,
-  getPrimaryOrganisationId,
+  resolveActiveOrganisationId,
 } from "@/lib/permissions/tenancy";
 import type { Membership, Organisation, Profile } from "@/types/database";
 
@@ -111,7 +112,16 @@ export async function requireOrganisationAdmin(organisationId: string) {
 export async function getPrimaryOrganisation(
   context: AuthContext,
 ): Promise<Organisation | null> {
-  const organisationId = getPrimaryOrganisationId(context.memberships);
+  const isPlatformAdmin = canAccessPlatformAdmin(context.profile);
+  const preferred = isPlatformAdmin
+    ? await readActiveOrganisationCookie()
+    : null;
+
+  const organisationId = resolveActiveOrganisationId({
+    memberships: context.memberships,
+    isPlatformAdmin,
+    preferredOrganisationId: preferred,
+  });
   if (!organisationId) return null;
 
   const supabase = await createClient();
@@ -120,6 +130,21 @@ export async function getPrimaryOrganisation(
     .select("*")
     .eq("id", organisationId)
     .maybeSingle();
+
+  // Stale cookie / deleted tenant → fall back to membership primary.
+  if (!data && preferred && preferred === organisationId) {
+    const fallbackId = resolveActiveOrganisationId({
+      memberships: context.memberships,
+      isPlatformAdmin: false,
+    });
+    if (!fallbackId || fallbackId === organisationId) return null;
+    const { data: fallback } = await supabase
+      .from("organisations")
+      .select("*")
+      .eq("id", fallbackId)
+      .maybeSingle();
+    return fallback;
+  }
 
   return data;
 }

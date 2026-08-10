@@ -118,3 +118,26 @@ export async function updateCardAction(
     };
   }
 }
+
+export async function getAdminCardPreviewAction(input: {
+  organisationId: string;
+  cardId: string;
+}): Promise<
+  | { ok: true; model: import("@/types/card").PublicCardViewModel; absoluteCardUrl: string }
+  | { ok: false; error: string }
+> {
+  try {
+    await requireOrganisationAdmin(input.organisationId);
+    const { getCardPreviewForAdmin } = await import("@/lib/db/cards");
+    const { getServerEnv } = await import("@/lib/validation/env");
+    const model = await getCardPreviewForAdmin(input);
+    if (!model) return { ok: false, error: "Card not found" };
+    const absoluteCardUrl = `${getServerEnv().NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${model.card.publicPath}`;
+    return { ok: true, model, absoluteCardUrl };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Failed to load preview",
+    };
+  }
+}

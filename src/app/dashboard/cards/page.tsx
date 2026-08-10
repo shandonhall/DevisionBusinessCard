@@ -49,8 +49,9 @@ export default async function CardsPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Cards</h1>
           <p className="text-[var(--brand-muted-text)]">
-            Publish employee cards to public URLs. Branding is inherited from
-            organisation and brand kits — never hard-coded per client.
+            Publish employee cards to public URLs. Drive marque identity follows
+            each employee&apos;s brand assignments (1 marque = marque card, 0
+            or 2+ = AGG).
           </p>
         </div>
         <CardsManager

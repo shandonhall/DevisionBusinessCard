@@ -1,8 +1,10 @@
 import type { DesignTokens } from "@/lib/branding/tokens";
 import type { Json } from "@/types/database";
+import type { DriveMarqueId } from "@/lib/experience/drive-marque";
 
 export type ExperiencePresetId =
   | "dimension"
+  | "drive"
   | "precision"
   | "studio"
   | "glass"
@@ -21,7 +23,8 @@ export type SurfaceStyle =
   | "matte"
   | "layered"
   | "solid"
-  | "smoked-acrylic";
+  | "smoked-acrylic"
+  | "graphite-lacquer";
 export type BackgroundStyle = "ambient" | "gradient" | "solid" | "mesh" | "studio";
 export type GeometryStyle = "soft" | "sharp" | "organic";
 export type ImageTreatment =
@@ -70,6 +73,8 @@ export type BrandDNA = {
   tokens: DesignTokens;
   visual: BrandVisualDNA;
   experience: ExperienceConfig;
+  /** Drive marque expression — only set when experience.preset === "drive". */
+  driveMarque?: DriveMarqueId;
 };
 
 export type ExperienceKitPartial = {

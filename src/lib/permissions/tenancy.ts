@@ -48,3 +48,26 @@ export function getPrimaryOrganisationId(
   );
   return sorted[0]?.organisation_id ?? null;
 }
+
+/**
+ * Active dashboard tenant. Platform admins may override via preferred id;
+ * everyone else always uses their oldest membership.
+ */
+export function resolveActiveOrganisationId(params: {
+  memberships: Pick<Membership, "organisation_id" | "created_at">[];
+  isPlatformAdmin: boolean;
+  preferredOrganisationId?: string | null;
+  /** When set, preferred id must be in this list (e.g. orgs visible to the admin). */
+  allowedOrganisationIds?: string[] | null;
+}): string | null {
+  const preferred = params.preferredOrganisationId?.trim() || null;
+  if (params.isPlatformAdmin && preferred) {
+    if (
+      !params.allowedOrganisationIds ||
+      params.allowedOrganisationIds.includes(preferred)
+    ) {
+      return preferred;
+    }
+  }
+  return getPrimaryOrganisationId(params.memberships);
+}

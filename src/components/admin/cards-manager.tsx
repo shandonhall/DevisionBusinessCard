@@ -8,19 +8,19 @@ import {
   type CardActionResult,
 } from "@/lib/cards/actions";
 import { LAYOUT_OPTIONS } from "@/lib/branding/tokens";
+import {
+  resolveDriveMarqueId,
+  type DriveMarqueId,
+} from "@/lib/experience/drive-marque";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Card, CardPublicStatus, Employee } from "@/types/database";
+import type { CardListItem } from "@/lib/db/cards";
+import type { CardPublicStatus, Employee } from "@/types/database";
 
 const initial: CardActionResult = { ok: false };
 
-type CardRow = Card & {
-  employee: Pick<
-    Employee,
-    "id" | "first_name" | "last_name" | "display_name" | "job_title"
-  > | null;
-};
+export type CardListRow = CardListItem;
 
 const STATUS_HELP: Record<CardPublicStatus, string> = {
   draft: "Not public. Use Preview to review before publishing.",
@@ -33,6 +33,22 @@ function statusLabel(status: CardPublicStatus) {
   return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
+function cardDriveBrand(card: CardListRow): {
+  id: DriveMarqueId;
+  label: string;
+} {
+  const marques = card.employee?.marques ?? [];
+  const id = resolveDriveMarqueId(marques);
+  const labels: Record<DriveMarqueId, string> = {
+    agg: "AGG",
+    geely: "Geely",
+    jetour: "Jetour",
+    mg: "MG",
+    jac: "JAC",
+  };
+  return { id, label: labels[id] };
+}
+
 export function CardsManager({
   organisationId,
   organisationSlug,
@@ -41,13 +57,14 @@ export function CardsManager({
 }: {
   organisationId: string;
   organisationSlug: string;
-  cards: CardRow[];
+  cards: CardListRow[];
   employeesWithoutCards: Pick<
     Employee,
     "id" | "first_name" | "last_name" | "display_name" | "job_title"
   >[];
 }) {
-  const [editing, setEditing] = useState<CardRow | null>(null);
+  const [editing, setEditing] = useState<CardListRow | null>(null);
+  const [brandFilter, setBrandFilter] = useState<"all" | DriveMarqueId>("all");
   const [createState, createAction, createPending] = useActionState(
     createCardForEmployeeAction,
     initial,
@@ -57,7 +74,11 @@ export function CardsManager({
     initial,
   );
 
-  const sorted = useMemo(() => cards, [cards]);
+  const sorted = useMemo(() => {
+    if (brandFilter === "all") return cards;
+    return cards.filter((card) => cardDriveBrand(card).id === brandFilter);
+  }, [cards, brandFilter]);
+
   const editingStatus = (editing?.public_status ?? "draft") as CardPublicStatus;
 
   return (
@@ -134,11 +155,41 @@ export function CardsManager({
         ) : null}
       </form>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <Label htmlFor="brandFilter">Brand filter</Label>
+          <select
+            id="brandFilter"
+            value={brandFilter}
+            onChange={(e) =>
+              setBrandFilter(e.target.value as "all" | DriveMarqueId)
+            }
+            className="flex h-10 min-w-[10rem] rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-surface)] px-3 text-sm"
+          >
+            <option value="all">All</option>
+            <option value="agg">AGG</option>
+            <option value="geely">Geely</option>
+            <option value="jetour">Jetour</option>
+            <option value="mg">MG</option>
+            <option value="jac">JAC</option>
+          </select>
+        </div>
+        <p className="text-sm text-[var(--brand-muted-text)]">
+          Drive identity follows employee marque count (1 = marque, 0/2+ = AGG).
+        </p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[var(--brand-card-radius)] border border-[var(--brand-border)] bg-[var(--brand-surface)] p-5">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">
             Cards ({sorted.length})
           </h2>
+          <div className="mb-3 hidden grid-cols-[1.2fr_0.7fr_1fr_0.6fr] gap-2 text-xs font-medium uppercase tracking-wide text-[var(--brand-muted-text)] sm:grid">
+            <span>Employee</span>
+            <span>Brand</span>
+            <span>Location</span>
+            <span>Status</span>
+          </div>
           <ul className="space-y-3">
             {sorted.map((card) => {
               const name =
@@ -147,16 +198,39 @@ export function CardsManager({
                 "Employee";
               const path = `/${organisationSlug}/${card.slug}`;
               const isActive = card.public_status === "active";
+              const driveBrand = cardDriveBrand(card);
+              const locationName = card.employee?.location?.name || "—";
+              const isDemo = Boolean(
+                card.employee?.employee_reference?.startsWith("demo-"),
+              );
               return (
                 <li
                   key={card.id}
                   className="space-y-2 border-b border-[var(--brand-border)] pb-3 last:border-0"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 space-y-1">
-                      <p className="font-medium">{name}</p>
-                      <p className="text-sm text-[var(--brand-muted-text)]">
-                        {card.layout_id} · {statusLabel(card.public_status)}
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="grid gap-1 sm:grid-cols-[1.2fr_0.7fr_1fr_0.6fr] sm:items-baseline sm:gap-2">
+                        <p className="font-medium">
+                          {name}
+                          {isDemo ? (
+                            <span className="ml-2 text-xs font-normal uppercase tracking-wide text-[var(--brand-muted-text)]">
+                              Demo
+                            </span>
+                          ) : null}
+                        </p>
+                        <p className="text-sm text-[var(--brand-muted-text)]">
+                          {driveBrand.label}
+                        </p>
+                        <p className="text-sm text-[var(--brand-muted-text)]">
+                          {locationName}
+                        </p>
+                        <p className="text-sm text-[var(--brand-muted-text)]">
+                          {statusLabel(card.public_status)}
+                        </p>
+                      </div>
+                      <p className="text-xs text-[var(--brand-muted-text)]">
+                        Drive · {card.layout_id}
                       </p>
                       {isActive ? (
                         <a
@@ -206,7 +280,7 @@ export function CardsManager({
             })}
             {sorted.length === 0 ? (
               <li className="text-sm text-[var(--brand-muted-text)]">
-                No cards yet. Publish an employee above.
+                No cards match this filter.
               </li>
             ) : null}
           </ul>
@@ -220,26 +294,41 @@ export function CardsManager({
           >
             <input type="hidden" name="organisationId" value={organisationId} />
             <input type="hidden" name="cardId" value={editing.id} />
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="text-lg font-semibold tracking-tight">Edit card</h2>
-              <Button asChild size="sm" variant="secondary">
-                <Link href={`/dashboard/cards/${editing.id}/preview`}>
-                  Preview
-                </Link>
-              </Button>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input id="slug" name="slug" defaultValue={editing.slug} required />
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight">
+                Edit card
+              </h2>
               <p className="text-xs text-[var(--brand-muted-text)]">
-                Changing the slug stores a redirect from the old URL so printed
-                QR / NFC links keep working.
+                {STATUS_HELP[editingStatus]}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editLayoutId">Layout</Label>
+              <Label htmlFor="slug">Slug</Label>
+              <Input
+                id="slug"
+                name="slug"
+                defaultValue={editing.slug}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="publicStatus">Status</Label>
               <select
-                id="editLayoutId"
+                id="publicStatus"
+                name="publicStatus"
+                defaultValue={editing.public_status}
+                className="flex h-10 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-surface)] px-3 text-sm"
+              >
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="layoutIdEdit">Layout</Label>
+              <select
+                id="layoutIdEdit"
                 name="layoutId"
                 defaultValue={editing.layout_id}
                 className="flex h-10 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-surface)] px-3 text-sm"
@@ -250,27 +339,6 @@ export function CardsManager({
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="publicStatus">Status</Label>
-              <select
-                id="publicStatus"
-                name="publicStatus"
-                defaultValue={editing.public_status}
-                className="flex h-10 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-surface)] px-3 text-sm"
-                onChange={(event) => {
-                  const next = event.target.value as CardPublicStatus;
-                  setEditing({ ...editing, public_status: next });
-                }}
-              >
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="paused">Paused</option>
-                <option value="archived">Archived</option>
-              </select>
-              <p className="text-xs text-[var(--brand-muted-text)]">
-                {STATUS_HELP[editingStatus]}
-              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="pageTitle">Page title</Label>
@@ -288,38 +356,35 @@ export function CardsManager({
                 defaultValue={editing.meta_description ?? ""}
               />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="primaryCtaLabel">Primary CTA label</Label>
-                <Input
-                  id="primaryCtaLabel"
-                  name="primaryCtaLabel"
-                  defaultValue={editing.primary_cta_label ?? ""}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="primaryCtaUrl">Primary CTA URL</Label>
-                <Input
-                  id="primaryCtaUrl"
-                  name="primaryCtaUrl"
-                  type="url"
-                  defaultValue={editing.primary_cta_url ?? ""}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="primaryCtaLabel">Primary CTA label</Label>
+              <Input
+                id="primaryCtaLabel"
+                name="primaryCtaLabel"
+                defaultValue={editing.primary_cta_label ?? ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="primaryCtaUrl">Primary CTA URL</Label>
+              <Input
+                id="primaryCtaUrl"
+                name="primaryCtaUrl"
+                defaultValue={editing.primary_cta_url ?? ""}
+              />
             </div>
             {updateState.error ? (
               <p className="text-sm text-red-700">{updateState.error}</p>
             ) : null}
             {updateState.ok ? (
-              <p className="text-sm text-emerald-700">Card updated.</p>
+              <p className="text-sm text-emerald-700">Saved.</p>
             ) : null}
             <div className="flex gap-2">
               <Button type="submit" disabled={updatePending}>
-                {updatePending ? "Saving…" : "Save card"}
+                {updatePending ? "Saving…" : "Save"}
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 onClick={() => setEditing(null)}
               >
                 Cancel
@@ -328,16 +393,8 @@ export function CardsManager({
           </form>
         ) : (
           <div className="rounded-[var(--brand-card-radius)] border border-dashed border-[var(--brand-border)] p-5 text-sm text-[var(--brand-muted-text)]">
-            Select a card to edit layout, slug, status and CTA.{" "}
-            <strong className="font-medium text-[var(--brand-text)]">
-              Active
-            </strong>{" "}
-            is public;{" "}
-            <strong className="font-medium text-[var(--brand-text)]">
-              paused
-            </strong>{" "}
-            shows unavailable; draft/archived are hidden. Use Preview for any
-            status.
+            Select <strong className="font-medium text-[var(--brand-text)]">Edit</strong>{" "}
+            on a card to change slug, status, or CTA fields.
           </div>
         )}
       </div>

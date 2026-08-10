@@ -3,6 +3,7 @@ import { platformDefaultTokens } from "@/lib/branding/tokens";
 import {
   resolveBrandDNA,
   shouldUseDimensionExperience,
+  shouldUseDriveExperience,
 } from "@/lib/experience/resolve";
 
 describe("resolveBrandDNA", () => {
@@ -25,6 +26,24 @@ describe("resolveBrandDNA", () => {
     expect(dna.experience.environmentTone).toBe("studio-dark");
     expect(shouldUseDimensionExperience(dna, "enhanced")).toBe(true);
     expect(shouldUseDimensionExperience(dna, "essential")).toBe(false);
+  });
+
+  it("resolves drive preset with graphite-lacquer visual DNA", () => {
+    const dna = resolveBrandDNA({
+      tokens: {
+        ...platformDefaultTokens,
+        primary: "#2D3E40",
+        accent: "#D4A017",
+      },
+      organisationKit: { experience_preset: "drive" },
+    });
+    expect(dna.experience.preset).toBe("drive");
+    expect(dna.visual.surfaceStyle).toBe("graphite-lacquer");
+    expect(dna.visual.geometryStyle).toBe("sharp");
+    expect(dna.experience.allowWebGL).toBe(false);
+    expect(dna.experience.tiltStrength).toBeGreaterThan(0);
+    expect(shouldUseDimensionExperience(dna, "full")).toBe(false);
+    expect(shouldUseDriveExperience(dna)).toBe(true);
   });
 
   it("never requires organisation name to select experience", () => {
