@@ -1,0 +1,125 @@
+import "server-only";
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import {
+  canAccessOrganisation,
+  canAccessPlatformAdmin,
+  canManageOrganisation,
+  getPrimaryOrganisationId,
+} from "@/lib/permissions/tenancy";
+import type { Membership, Organisation, Profile } from "@/types/database";
+
+export type AuthContext = {
+  userId: string;
+  email: string;
+  profile: Profile;
+  memberships: Membership[];
+};
+
+export async function getSessionUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return null;
+  }
+
+  return user;
+}
+
+export async function requireUser() {
+  const user = await getSessionUser();
+  if (!user) {
+    redirect("/auth/sign-in");
+  }
+  return user;
+}
+
+export async function getAuthContext(): Promise<AuthContext | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const [{ data: profile }, { data: memberships }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase.from("memberships").select("*").eq("user_id", user.id),
+  ]);
+
+  if (!profile || profile.status !== "active") {
+    return null;
+  }
+
+  return {
+    userId: user.id,
+    email: user.email ?? profile.email,
+    profile,
+    memberships: memberships ?? [],
+  };
+}
+
+export async function requireAuthContext(): Promise<AuthContext> {
+  const context = await getAuthContext();
+  if (!context) {
+    redirect("/auth/sign-in");
+  }
+  return context;
+}
+
+export async function requirePlatformAdmin(): Promise<AuthContext> {
+  const context = await requireAuthContext();
+  if (!canAccessPlatformAdmin(context.profile)) {
+    redirect("/dashboard");
+  }
+  return context;
+}
+
+export async function requireOrganisationAccess(organisationId: string) {
+  const context = await requireAuthContext();
+  if (
+    !canAccessOrganisation({
+      profile: context.profile,
+      memberships: context.memberships,
+      organisationId,
+    })
+  ) {
+    redirect("/dashboard");
+  }
+  return context;
+}
+
+export async function requireOrganisationAdmin(organisationId: string) {
+  const context = await requireAuthContext();
+  if (
+    !canManageOrganisation({
+      profile: context.profile,
+      memberships: context.memberships,
+      organisationId,
+    })
+  ) {
+    redirect("/dashboard");
+  }
+  return context;
+}
+
+export async function getPrimaryOrganisation(
+  context: AuthContext,
+): Promise<Organisation | null> {
+  const organisationId = getPrimaryOrganisationId(context.memberships);
+  if (!organisationId) return null;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("organisations")
+    .select("*")
+    .eq("id", organisationId)
+    .maybeSingle();
+
+  return data;
+}

@@ -1,0 +1,4 @@
+-- Document storage path RLS for Milestone 2
+-- Bucket: organisation-assets
+-- Object path: {organisation_id}/logos/*
+-- Policies live in migration 20260310143000_brand_kits.sql
