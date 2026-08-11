@@ -3,7 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
-const AUTH_PREFIXES = ["/auth/sign-in", "/auth/sign-up"];
+const AUTH_PREFIXES = [
+  "/auth/sign-in",
+  "/auth/sign-up",
+  "/auth/agg",
+  "/auth/create-organisation",
+];
 
 /**
  * Refresh auth cookies and enforce route protection.

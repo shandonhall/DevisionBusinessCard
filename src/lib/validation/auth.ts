@@ -29,10 +29,30 @@ export const signInSchema = z.object({
   password: z.string().min(8),
 });
 
-export const signUpSchema = z.object({
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(8).max(128),
+    newPassword: z.string().min(8).max(128),
+    confirmPassword: z.string().min(8).max(128),
+  })
+  .refine((value) => value.newPassword === value.confirmPassword, {
+    message: "New passwords do not match",
+    path: ["confirmPassword"],
+  })
+  .refine((value) => value.currentPassword !== value.newPassword, {
+    message: "New password must be different from your current password",
+    path: ["newPassword"],
+  });
+
+/** Team / employee account signup — does not create an organisation admin. */
+export const userSignUpSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
   email: z.string().trim().email(),
   password: z.string().min(8).max(128),
+});
+
+/** Platform-only: create a new tenant + first organisation admin. */
+export const signUpSchema = userSignUpSchema.extend({
   organisationName: z.string().trim().min(2).max(120),
   organisationSlug: slugSchema,
 });

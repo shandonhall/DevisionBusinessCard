@@ -247,33 +247,32 @@ export function CardsManager({
                           <span className="text-xs">(not public)</span>
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-3 pt-1 text-sm">
-                        <Link
-                          href={`/dashboard/cards/${card.id}/preview`}
-                          className="text-[var(--brand-primary)] underline-offset-4 hover:underline"
+                      {isActive ? (
+                        <a
+                          href={`${path}/qr`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-block text-sm text-[var(--brand-primary)] underline-offset-4 hover:underline"
                         >
-                          Preview
-                        </Link>
-                        {isActive ? (
-                          <a
-                            href={`${path}/qr`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[var(--brand-primary)] underline-offset-4 hover:underline"
-                          >
-                            QR
-                          </a>
-                        ) : null}
-                      </div>
+                          Open QR page
+                        </a>
+                      ) : null}
                     </div>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setEditing(card)}
-                    >
-                      Edit
-                    </Button>
+                    <div className="flex shrink-0 flex-col items-stretch gap-2 sm:flex-row sm:items-start">
+                      <Button asChild size="sm" className="min-w-[7.5rem]">
+                        <Link href={`/dashboard/cards/${card.id}/preview`}>
+                          Preview card
+                        </Link>
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditing(card)}
+                      >
+                        Edit
+                      </Button>
+                    </div>
                   </div>
                 </li>
               );

@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { AppHeader } from "@/components/admin/app-header";
 import { CardPreviewDemoSwitcher } from "@/components/cards/card-preview-demo-switcher";
 import { CardPreviewViewport } from "@/components/cards/card-preview-viewport";
 import { PublicCardRenderer } from "@/components/cards/public-card-renderer";
@@ -14,7 +13,6 @@ import {
   getCardPreviewForAdmin,
   listDriveDemoPreviewSiblings,
 } from "@/lib/db/cards";
-import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 import { getServerEnv } from "@/lib/validation/env";
 
 export const dynamic = "force-dynamic";
@@ -48,12 +46,7 @@ export default async function CardPreviewPage({ params }: Props) {
     demoSiblings.some((sibling) => sibling.cardId === cardId);
 
   return (
-    <div className="min-h-screen bg-[var(--brand-background)]">
-      <AppHeader
-        title="Preview"
-        email={context.email}
-        showAdminLink={canAccessPlatformAdmin(context.profile)}
-      />
+    <div>
       {isDemoPreview ? (
         <CardPreviewDemoSwitcher
           organisationId={organisation.id}

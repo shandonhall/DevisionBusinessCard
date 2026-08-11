@@ -54,14 +54,34 @@ export function CardPreviewViewport({ children }: { children: ReactNode }) {
             "mx-auto flex justify-center bg-[var(--brand-background)] px-3 pb-8",
         )}
       >
-        <div
-          className={cn(
-            mode === "mobile" &&
-              "w-full max-w-[390px] overflow-hidden rounded-[1.75rem] border border-[var(--brand-border-strong)] shadow-[0_24px_60px_-24px_rgb(0_0_0_/_0.55)] ring-1 ring-black/20",
-          )}
-        >
-          {children}
-        </div>
+        {mode === "mobile" ? (
+          <div
+            className="relative w-full max-w-[390px] overflow-hidden rounded-[2.25rem] border border-[var(--brand-border-strong)] bg-[#0b0d10] shadow-[0_24px_60px_-24px_rgb(0_0_0_/_0.6)] ring-1 ring-black/25"
+            style={{ aspectRatio: "9 / 19.5" }}
+          >
+            {/* Speaker / sensors notch */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[10px] h-[26px] w-[130px] -translate-x-1/2 rounded-[999px] bg-[rgba(0,0,0,0.35)] ring-1 ring-white/10"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[18px] h-[10px] w-[62px] -translate-x-1/2 rounded-[999px] bg-[rgba(0,0,0,0.55)]"
+            />
+
+            {/* Screen */}
+            <div className="absolute inset-[10px] overflow-hidden rounded-[1.85rem] bg-[var(--brand-surface)] ring-1 ring-black/15">
+              {/* Home indicator (subtle) */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute bottom-[10px] left-1/2 h-[5px] w-[100px] -translate-x-1/2 rounded-[999px] bg-[rgba(0,0,0,0.25)]"
+              />
+              {children}
+            </div>
+          </div>
+        ) : (
+          <div className="w-full">{children}</div>
+        )}
       </div>
     </div>
   );

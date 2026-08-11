@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { signOutAction } from "@/lib/auth/actions";
@@ -5,6 +6,7 @@ import { PlatformOrgSwitcher } from "@/components/admin/platform-org-switcher";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { PLATFORM_NAME } from "@/lib/branding/platform";
+import { resolveTenantLoginBrand } from "@/lib/branding/tenant-login";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
@@ -16,6 +18,7 @@ const NAV_LINKS = [
   { href: "/dashboard/locations", label: "Locations" },
   { href: "/dashboard/brand", label: "Brand kit" },
   { href: "/dashboard/settings", label: "Settings" },
+  { href: "/dashboard/account", label: "Account" },
 ] as const;
 
 const PLATFORM_SHORT_NAME = PLATFORM_NAME.split(/\s+/)[0] || PLATFORM_NAME;
@@ -24,30 +27,73 @@ export function AppHeader({
   title,
   email,
   showAdminLink,
+  organisation,
 }: {
-  title: string;
+  title?: string;
   email?: string;
   showAdminLink?: boolean;
+  organisation?: { name: string; slug: string } | null;
 }) {
+  const tenantBrand = resolveTenantLoginBrand(organisation?.slug);
+  const poweredBy = tenantBrand?.poweredBy;
+
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--brand-border)] bg-[var(--brand-surface)]/95 backdrop-blur">
       <div className="mx-auto w-full max-w-5xl px-4 py-2.5 sm:px-6">
         <div className="flex items-center justify-between gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
-            <Link
-              href="/"
-              className="shrink-0 text-[14px] font-semibold leading-none tracking-tight text-[var(--brand-text)] sm:text-[15px]"
-            >
-              <span className="sm:hidden">{PLATFORM_SHORT_NAME}</span>
-              <span className="hidden sm:inline">{PLATFORM_NAME}</span>
-            </Link>
-            <span
-              className="hidden h-3.5 w-px shrink-0 bg-[var(--brand-border-strong)] sm:block"
-              aria-hidden
-            />
-            <span className="truncate text-sm leading-none text-[var(--brand-muted-text)]">
-              {title}
-            </span>
+            {tenantBrand ? (
+              <Link
+                href="/dashboard"
+                className="flex min-w-0 items-center gap-2.5"
+                aria-label={tenantBrand.organisationName}
+              >
+                <span
+                  className={cn(
+                    "flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-md px-2.5",
+                    tenantBrand.logoOnDark && "bg-[#0b0d10] ring-1 ring-black/20",
+                  )}
+                >
+                  <Image
+                    src={tenantBrand.logoUrl}
+                    alt=""
+                    width={72}
+                    height={40}
+                    className="h-8 w-auto object-contain"
+                    priority
+                  />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-[14px] font-semibold leading-none tracking-tight text-[var(--brand-text)] sm:text-[15px]">
+                    {tenantBrand.organisationName}
+                  </span>
+                  {poweredBy ? (
+                    <span className="mt-1 block truncate text-[10px] leading-none tracking-wide text-[var(--brand-muted-text)]">
+                      {poweredBy}
+                    </span>
+                  ) : null}
+                </span>
+              </Link>
+            ) : (
+              <Link
+                href="/"
+                className="shrink-0 text-[14px] font-semibold leading-none tracking-tight text-[var(--brand-text)] sm:text-[15px]"
+              >
+                <span className="sm:hidden">{PLATFORM_SHORT_NAME}</span>
+                <span className="hidden sm:inline">{PLATFORM_NAME}</span>
+              </Link>
+            )}
+            {title ? (
+              <>
+                <span
+                  className="hidden h-3.5 w-px shrink-0 bg-[var(--brand-border-strong)] sm:block"
+                  aria-hidden
+                />
+                <span className="truncate text-sm leading-none text-[var(--brand-muted-text)]">
+                  {title}
+                </span>
+              </>
+            ) : null}
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">

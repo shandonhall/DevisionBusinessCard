@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/admin/app-header";
 import { CardsManager } from "@/components/admin/cards-manager";
 import {
   getPrimaryOrganisation,
@@ -8,7 +7,6 @@ import {
 } from "@/lib/auth/session";
 import { listCards } from "@/lib/db/cards";
 import { listEmployees } from "@/lib/db/structure";
-import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 
 export const dynamic = "force-dynamic";
 
@@ -39,28 +37,24 @@ export default async function CardsPage() {
     }));
 
   return (
-    <div className="min-h-screen">
-      <AppHeader
-        title="Cards"
-        email={context.email}
-        showAdminLink={canAccessPlatformAdmin(context.profile)}
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Cards</h1>
+        <p className="text-[var(--brand-muted-text)]">
+          Publish employee cards to public URLs. Use{" "}
+          <strong className="font-semibold text-[var(--brand-text)]">
+            Preview card
+          </strong>{" "}
+          on any row to review Drive marque identity (desktop or phone frame)
+          before sharing.
+        </p>
+      </div>
+      <CardsManager
+        organisationId={organisation.id}
+        organisationSlug={organisation.slug}
+        cards={cards}
+        employeesWithoutCards={employeesWithoutCards}
       />
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Cards</h1>
-          <p className="text-[var(--brand-muted-text)]">
-            Publish employee cards to public URLs. Drive marque identity follows
-            each employee&apos;s brand assignments (1 marque = marque card, 0
-            or 2+ = AGG).
-          </p>
-        </div>
-        <CardsManager
-          organisationId={organisation.id}
-          organisationSlug={organisation.slug}
-          cards={cards}
-          employeesWithoutCards={employeesWithoutCards}
-        />
-      </main>
-    </div>
+    </main>
   );
 }

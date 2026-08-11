@@ -1,24 +1,22 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState } from "react";
 import Link from "next/link";
-import { signUpAction, type AuthActionState } from "@/lib/auth/actions";
-import { slugifyOrganisationName } from "@/lib/validation/auth";
+import { signUpUserAction, type AuthActionState } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const initialState: AuthActionState = {};
 
-export function SignUpForm() {
-  const [state, formAction, pending] = useActionState(signUpAction, initialState);
-  const [orgName, setOrgName] = useState("");
-  const [slugTouched, setSlugTouched] = useState(false);
-  const [slug, setSlug] = useState("");
-
-  const suggestedSlug = useMemo(
-    () => slugifyOrganisationName(orgName),
-    [orgName],
+/**
+ * Public account signup for staff who were added by an organisation admin.
+ * Does not create organisations or grant organisation_admin.
+ */
+export function SignUpForm({ signInHref = "/auth/sign-in" }: { signInHref?: string }) {
+  const [state, formAction, pending] = useActionState(
+    signUpUserAction,
+    initialState,
   );
 
   return (
@@ -48,35 +46,6 @@ export function SignUpForm() {
           autoComplete="new-password"
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="organisationName">Organisation name</Label>
-        <Input
-          id="organisationName"
-          name="organisationName"
-          required
-          value={orgName}
-          onChange={(e) => {
-            setOrgName(e.target.value);
-            if (!slugTouched) setSlug(slugifyOrganisationName(e.target.value));
-          }}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="organisationSlug">Organisation slug</Label>
-        <Input
-          id="organisationSlug"
-          name="organisationSlug"
-          required
-          value={slugTouched ? slug : suggestedSlug || slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            setSlug(e.target.value);
-          }}
-        />
-        <p className="text-xs text-[var(--brand-muted-text)]">
-          Used in public URLs later, e.g. /your-slug/…
-        </p>
-      </div>
       {state.error ? (
         <p className="text-sm text-red-700" role="alert">
           {state.error}
@@ -88,11 +57,14 @@ export function SignUpForm() {
         </p>
       ) : null}
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Creating…" : "Create organisation"}
+        {pending ? "Creating account…" : "Create account"}
       </Button>
       <p className="text-center text-sm text-[var(--brand-muted-text)]">
         Already have an account?{" "}
-        <Link href="/auth/sign-in" className="font-medium text-[var(--brand-primary)]">
+        <Link
+          href={signInHref}
+          className="font-medium text-[var(--brand-primary)]"
+        >
           Sign in
         </Link>
       </p>

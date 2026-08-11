@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { AppHeader } from "@/components/admin/app-header";
-import { CreateOrganisationForm } from "@/components/forms/create-organisation-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,26 +11,18 @@ import {
   getPrimaryOrganisation,
   requireAuthContext,
 } from "@/lib/auth/session";
-import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const context = await requireAuthContext();
   const organisation = await getPrimaryOrganisation(context);
-  const isPlatformAdmin = canAccessPlatformAdmin(context.profile);
   const membershipRole =
     context.memberships.find((m) => m.organisation_id === organisation?.id)
       ?.role ?? "member";
 
   return (
-    <div className="min-h-screen">
-      <AppHeader
-        title="Dashboard"
-        email={context.email}
-        showAdminLink={isPlatformAdmin}
-      />
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight text-[var(--brand-text)] sm:text-3xl">
             {`Welcome${context.profile.full_name ? `, ${context.profile.full_name}` : ""}`}
@@ -74,21 +64,37 @@ export default async function DashboardPage() {
                   <Link href="/dashboard/brand">Brand kit</Link>
                 </Button>
               </div>
+              <p className="text-sm text-[var(--brand-muted-text)]">
+                Tip: open{" "}
+                <Link
+                  href="/dashboard/cards"
+                  className="font-medium text-[var(--brand-primary)] underline-offset-4 hover:underline"
+                >
+                  Cards
+                </Link>{" "}
+                and click{" "}
+                <strong className="font-semibold text-[var(--brand-text)]">
+                  Preview card
+                </strong>{" "}
+                to review each Drive marque in a phone frame.
+              </p>
             </CardContent>
           </Card>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>No organisation yet</CardTitle>
+              <CardTitle>No organisation access yet</CardTitle>
               <CardDescription>
-                Create your organisation to unlock Team, Cards, Brands, and the
-                rest of the dashboard.
+                Your login works, but you are not an organisation admin and no
+                Team profile matched this email yet.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <CreateOrganisationForm
-                defaultName={context.profile.full_name ?? ""}
-              />
+            <CardContent className="space-y-3 text-sm text-[var(--brand-muted-text)]">
+              <p>
+                Ask your organisation admin to add you on Team with this email
+                ({context.email}). After that, sign out and sign back in to link
+                your card.
+              </p>
             </CardContent>
           </Card>
         )}
@@ -129,6 +135,5 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </main>
-    </div>
   );
 }

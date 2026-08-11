@@ -9,7 +9,11 @@ import { Label } from "@/components/ui/label";
 
 const initialState: AuthActionState = {};
 
-export function SignInForm() {
+export function SignInForm({
+  signUpHref = "/auth/sign-up",
+}: {
+  signUpHref?: string;
+}) {
   const [state, formAction, pending] = useActionState(signInAction, initialState);
 
   return (
@@ -44,9 +48,12 @@ export function SignInForm() {
         {pending ? "Signing in…" : "Sign in"}
       </Button>
       <p className="text-center text-sm text-[var(--brand-muted-text)]">
-        New organisation?{" "}
-        <Link href="/auth/sign-up" className="font-medium text-[var(--brand-primary)]">
-          Create an account
+        Need an account?{" "}
+        <Link
+          href={signUpHref}
+          className="font-medium text-[var(--brand-primary)]"
+        >
+          Sign up
         </Link>
       </p>
     </form>
