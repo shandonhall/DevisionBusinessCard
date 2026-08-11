@@ -2477,7 +2477,190 @@ a {
   color: #1a0808;
 }
 
-/* Marque logos ? local approved copies */
+/* Ford - cool product-studio blue, not AGG champagne/gold */
+.drive-shell[data-marque="ford"] {
+  --drive-champagne-deep: color-mix(in srgb, var(--drive-champagne) 68%, #001228);
+  --drive-graphite: #0c1520;
+  --drive-graphite-mid: #152436;
+  --drive-graphite-deep: #04070c;
+  --drive-rim: color-mix(in srgb, var(--drive-champagne) 48%, #4a7ab0);
+}
+
+.drive-shell[data-marque="ford"] .drive-card {
+  border-radius: 0.8rem;
+}
+
+.drive-shell[data-marque="ford"] .drive-card__base {
+  background:
+    linear-gradient(
+      152deg,
+      #163251 0%,
+      #0c1a2c 38%,
+      #071018 72%,
+      #04070c 100%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-card__rim {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--drive-champagne) 34%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #9ec5ef 38%, transparent),
+    inset 0 -1px 0 rgb(0 0 0 / 0.55);
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__key {
+  background:
+    radial-gradient(
+      ellipse 70% 45% at 50% 8%,
+      rgb(120 170 220 / 0.22),
+      transparent 70%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__softbox {
+  background:
+    radial-gradient(
+      ellipse 55% 35% at 72% 18%,
+      rgb(180 210 240 / 0.16),
+      transparent 68%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__fill {
+  background:
+    radial-gradient(
+      ellipse 50% 40% at 18% 42%,
+      rgb(0 52 120 / 0.28),
+      transparent 70%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__halo {
+  background: radial-gradient(
+    ellipse at 50% 48%,
+    rgb(91 155 213 / 0.16),
+    transparent 68%
+  );
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__champagne {
+  background:
+    radial-gradient(
+      ellipse 40% 28% at 58% 30%,
+      rgb(91 155 213 / 0.12),
+      transparent 72%
+    );
+  opacity: 0.85;
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__floor {
+  background:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(8 18 32 / 0.55) 48%,
+      rgb(4 8 14 / 0.92) 100%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-bg__floor-gloss {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 8%,
+      rgb(120 170 220 / 0.08) 48%,
+      transparent 92%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-card-shadow--bounce {
+  background: color-mix(in srgb, var(--drive-champagne) 18%, transparent);
+}
+
+.drive-shell[data-marque="ford"] .drive-portrait {
+  border-radius: 0.5rem;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--drive-champagne) 42%, transparent),
+    0 18px 40px -18px rgb(0 0 0 / 0.75);
+}
+
+.drive-shell[data-marque="ford"] .drive-portrait__grade {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(8 20 36 / 0.05) 0%,
+      rgb(4 10 18 / 0.35) 100%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-portrait__coat {
+  background:
+    linear-gradient(
+      125deg,
+      rgb(160 200 240 / 0.14) 0%,
+      transparent 42%,
+      transparent 58%,
+      rgb(0 40 90 / 0.18) 100%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-name {
+  letter-spacing: 0.02em;
+}
+
+.drive-shell[data-marque="ford"] .drive-title {
+  letter-spacing: 0.18em;
+}
+
+.drive-shell[data-marque="ford"] .drive-dock__save {
+  color: #f4f8fc;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #5b9bd5 55%, #003478) 0%,
+    #003478 48%,
+    #001e44 100%
+  );
+  box-shadow:
+    0 12px 26px -14px color-mix(in srgb, #003478 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #001e44 80%, #000),
+    inset 0 1px 0 rgb(180 210 240 / 0.28);
+}
+
+.drive-shell[data-marque="ford"] .drive-dock__save:hover {
+  filter: brightness(1.06);
+}
+
+.drive-shell[data-marque="ford"] .drive-dock__btn {
+  border-radius: 0.45rem;
+}
+
+.drive-shell[data-marque="ford"] .drive-console {
+  border-radius: 0.75rem;
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, #152436 88%, #003478) 0%,
+      #0a121c 100%
+    );
+}
+
+.drive-shell[data-marque="ford"] .drive-tagline strong {
+  color: color-mix(in srgb, var(--drive-champagne) 78%, #e8f2ff);
+}
+
+/* Site Ford script is navy-on-black; lift to white for dark Drive surfaces */
+.drive-shell[data-marque="ford"] .drive-card__badge-logo {
+  height: 3.35rem;
+  width: auto;
+  max-width: min(86%, 16.5rem);
+  object-fit: contain;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 6px 14px rgb(0 12 32 / 0.55));
+  opacity: 0.96;
+}
+
+/* Marque logos - local approved copies */
 .drive-shell[data-marque="geely"] .drive-card__badge-logo {
   height: 4.25rem;
   max-width: min(94%, 24rem);
@@ -2532,5 +2715,10 @@ a {
 
   .drive-shell[data-marque="jac"] .drive-card__badge-logo--mark {
     height: 5.5rem;
+  }
+
+  .drive-shell[data-marque="ford"] .drive-card__badge-logo {
+    height: 4.05rem;
+    max-width: min(88%, 20rem);
   }
 }

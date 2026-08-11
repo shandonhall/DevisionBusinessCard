@@ -20,5 +20,6 @@ export async function writeActiveOrganisationCookie(
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
+    secure: process.env.NODE_ENV === "production",
   });
 }

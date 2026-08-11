@@ -29,7 +29,7 @@ export function DriveIdentityCard({
 }: {
   model: PublicCardViewModel;
   dna: BrandDNA;
-  logoUrl: string;
+  logoUrl?: string;
   marque: DriveMarqueId;
   handlers: {
     onPointerMove: (e: React.PointerEvent<HTMLElement>) => void;
@@ -93,7 +93,7 @@ export function DriveIdentityCard({
                 <div className="drive-card__falloff" aria-hidden />
                 <div className="drive-card__rim" aria-hidden />
 
-                <div className="drive-card__badge">
+              <div className="drive-card__badge">
                   {marqueConfig.wordmark ? (
                     <p
                       className="drive-card__badge-wordmark"
@@ -101,7 +101,7 @@ export function DriveIdentityCard({
                     >
                       {marqueConfig.wordmark}
                     </p>
-                  ) : (
+                  ) : logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={logoUrl}
@@ -114,6 +114,13 @@ export function DriveIdentityCard({
                       width={160}
                       height={160}
                     />
+                  ) : (
+                    <p
+                      className="drive-card__badge-wordmark"
+                      aria-label={marqueConfig.label}
+                    >
+                      {marqueConfig.label}
+                    </p>
                   )}
                 </div>
 

@@ -44,7 +44,7 @@ export function DriveCardExperience({
     marqueConfig.logoPath ||
     model.tokens.logoUrl ||
     model.brand?.logoUrl ||
-    "/brands/agg/agg-logo.png";
+    undefined;
 
   return (
     <CardShell

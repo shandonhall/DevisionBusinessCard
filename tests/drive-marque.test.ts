@@ -17,6 +17,11 @@ describe("resolveDriveMarqueId", () => {
     expect(resolveDriveMarqueId([{ slug: "jetour" }])).toBe("jetour");
     expect(resolveDriveMarqueId([{ slug: "mg" }])).toBe("mg");
     expect(resolveDriveMarqueId([{ slug: "jac" }])).toBe("jac");
+    expect(resolveDriveMarqueId([{ slug: "ford" }])).toBe("ford");
+  });
+
+  it("does not treat CMH corporate slugs as vehicle marques", () => {
+    expect(resolveDriveMarqueId([{ slug: "cmh-motor-group" }])).toBe("agg");
   });
 
   it("returns agg when multiple vehicle marques", () => {
@@ -119,6 +124,43 @@ describe("drive marque view model", () => {
     expect(view.brandDNA.driveMarque).toBe("geely");
     expect(view.tokens.accent).toBe("#6FA8C9");
     expect(view.tokens.logoUrl).toContain("geely");
+  });
+
+  it("applies ford drive marque without AGG gold tokens", () => {
+    const payload = parsePublicCardPayload({
+      ...base,
+      organisation: {
+        ...base.organisation,
+        name: "CMH Motor Group",
+        slug: "cmh-motor-group",
+        website: "https://cmhford.co.za/ballito/",
+      },
+      location: {
+        id: "l2",
+        name: "CMH Ford Ballito",
+        slug: "cmh-ford-ballito",
+        type: "dealership",
+        address: null,
+        phone: null,
+        email: null,
+        website: "https://cmhford.co.za/ballito/",
+      },
+      marques: [
+        {
+          id: "bf",
+          name: "Ford",
+          slug: "ford",
+          website: "https://cmhford.co.za/ballito/",
+          logo_url: "/brands/marques/ford-logo.png",
+        },
+      ],
+    } as unknown as Json);
+    const view = toPublicCardViewModel(payload!);
+    expect(view.brandDNA.driveMarque).toBe("ford");
+    expect(view.tokens.primary).toBe("#003478");
+    expect(view.tokens.accent).toBe("#5B9BD5");
+    expect(view.tokens.accent).not.toBe("#C9A962");
+    expect(view.tokens.logoUrl).toContain("ford-logo");
   });
 
   it("falls back to agg for multi-marque employees", () => {

@@ -6,7 +6,7 @@ import { driveExperienceConfig, driveVisualDNA } from "@/lib/experience/defaults
  * Drive marque identity - visual expression within the shared Drive engine.
  * Never branch on organisation.name; resolve from employee marque assignments.
  */
-export type DriveMarqueId = "agg" | "geely" | "jetour" | "mg" | "jac";
+export type DriveMarqueId = "agg" | "geely" | "jetour" | "mg" | "jac" | "ford";
 
 export type DriveMarqueConfig = {
   id: DriveMarqueId;
@@ -40,7 +40,13 @@ export type DriveMarqueConfig = {
   taglineHtml: { lead: string; strongA: string; mid: string; strongB: string };
 };
 
-const CORPORATE_SLUGS = new Set(["agg-motors", "agg"]);
+const CORPORATE_SLUGS = new Set([
+  "agg-motors",
+  "agg",
+  "cmh-motor-group",
+  "cmh",
+  "cmh-motors",
+]);
 
 export const DRIVE_MARQUE_CONFIGS: Record<DriveMarqueId, DriveMarqueConfig> = {
   agg: {
@@ -238,6 +244,52 @@ export const DRIVE_MARQUE_CONFIGS: Record<DriveMarqueId, DriveMarqueConfig> = {
       strongB: "work",
     },
   },
+  ford: {
+    id: "ford",
+    label: "Ford",
+    sourceUrl: "https://cmhford.co.za/ballito/",
+    logoPath: "/brands/marques/ford-logo.png",
+    headingFont: "Montserrat",
+    bodyFont: "Source Sans 3",
+    fontNote:
+      "Logo: local copy of https://cmhford.co.za/wp-content/uploads/2022/09/ford_logo.png from CMH Ford Ballito. Official Ford Fuse is not redistributed; Montserrat + Source Sans 3 approximate Ford's industrial sans.",
+    website: "https://cmhford.co.za/ballito/",
+    tokens: {
+      primary: "#003478",
+      secondary: "#001E44",
+      accent: "#5B9BD5",
+      background: "#04070C",
+      surface: "#0C121A",
+      text: "#F4F7FB",
+      mutedText: "#8FA3B8",
+    },
+    visual: {
+      visualPersonality: "corporate",
+      surfaceStyle: "graphite-lacquer",
+      backgroundStyle: "studio",
+      geometryStyle: "sharp",
+      imageTreatment: "integrated",
+      borderStyle: "subtle",
+      cornerStyle: "precision",
+    },
+    experience: {
+      ...driveExperienceConfig,
+      chromaticIntensity: 0.16,
+      reflectionStrength: 0.7,
+      tiltStrength: 0.47,
+      interactionIntensity: 0.58,
+      ambientMotion: true,
+      environmentTone: "studio-dark",
+      logoTreatment: "embedded",
+      profileTreatment: "integrated",
+    },
+    taglineHtml: {
+      lead: "Go",
+      strongA: "Further",
+      mid: ". Built for the",
+      strongB: "road",
+    },
+  },
 };
 
 export function isVehicleMarqueSlug(slug: string): boolean {
@@ -254,7 +306,13 @@ export function resolveDriveMarqueId(
   const vehicle = marques.filter((m) => isVehicleMarqueSlug(m.slug));
   if (vehicle.length === 1) {
     const slug = vehicle[0]?.slug;
-    if (slug === "geely" || slug === "jetour" || slug === "mg" || slug === "jac") {
+    if (
+      slug === "geely" ||
+      slug === "jetour" ||
+      slug === "mg" ||
+      slug === "jac" ||
+      slug === "ford"
+    ) {
       return slug;
     }
   }

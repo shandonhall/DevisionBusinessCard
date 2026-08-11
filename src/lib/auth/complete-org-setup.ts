@@ -3,28 +3,33 @@ import "server-only";
 import type { User } from "@supabase/supabase-js";
 import { createOrganisationWithAdminMembership } from "@/lib/db/organisations";
 import { createClient } from "@/lib/supabase/server";
+import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 import { createOrganisationSchema } from "@/lib/validation/auth";
 
 /**
- * Completes org bootstrap after email confirmation (or when signup
- * returned no session). Safe to call repeatedly - no-ops if memberships exist.
+ * Completes org bootstrap after email confirmation when Platform Admin
+ * metadata is present. Non-platform users cannot create organisations.
+ * Safe to call repeatedly - no-ops if memberships already cover the slug
+ * or if the caller is not a Platform Admin.
  */
 export async function completePendingOrganisationSetup(
   user: User,
 ): Promise<{ created: boolean; organisationId?: string }> {
   const supabase = await createClient();
 
-  const { data: memberships, error: membershipError } = await supabase
-    .from("memberships")
-    .select("id")
-    .eq("user_id", user.id)
-    .limit(1);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_platform_admin, status")
+    .eq("id", user.id)
+    .maybeSingle();
 
-  if (membershipError) {
-    throw new Error(membershipError.message);
-  }
-
-  if (memberships && memberships.length > 0) {
+  if (
+    !profile ||
+    !canAccessPlatformAdmin({
+      is_platform_admin: profile.is_platform_admin,
+      status: profile.status,
+    })
+  ) {
     return { created: false };
   }
 
@@ -45,6 +50,16 @@ export async function completePendingOrganisationSetup(
   const parsed = createOrganisationSchema.safeParse({ name, slug });
   if (!parsed.success) {
     return { created: false };
+  }
+
+  const { data: existingOrg } = await supabase
+    .from("organisations")
+    .select("id")
+    .eq("slug", parsed.data.slug)
+    .maybeSingle();
+
+  if (existingOrg) {
+    return { created: false, organisationId: existingOrg.id };
   }
 
   const organisation = await createOrganisationWithAdminMembership({

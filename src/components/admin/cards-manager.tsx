@@ -45,6 +45,7 @@ function cardDriveBrand(card: CardListRow): {
     jetour: "Jetour",
     mg: "MG",
     jac: "JAC",
+    ford: "Ford",
   };
   return { id, label: labels[id] };
 }
@@ -172,6 +173,7 @@ export function CardsManager({
             <option value="jetour">Jetour</option>
             <option value="mg">MG</option>
             <option value="jac">JAC</option>
+            <option value="ford">Ford</option>
           </select>
         </div>
         <p className="text-sm text-[var(--brand-muted-text)]">

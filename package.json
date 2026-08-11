@@ -11,8 +11,15 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:isolation": "node scripts/test-tenant-isolation.cjs",
+    "test:isolation:cmh-agg": "node scripts/verify-cmh-agg-isolation.cjs",
+    "seed:cmh-admin": "node scripts/create-cmh-admin-user.cjs",
     "typecheck": "tsc --noEmit",
-    "seed:agg-marque-demos": "node scripts/seed-agg-marque-demos.cjs"
+    "seed:agg-marque-demos": "node scripts/seed-agg-marque-demos.cjs",
+    "seed:cmh-org": "node scripts/bootstrap-cmh-org.cjs",
+    "seed:cmh-ford-brand": "node scripts/bootstrap-cmh-ford-brand.cjs",
+    "seed:cmh-ford-ballito": "node scripts/bootstrap-cmh-ford-ballito.cjs",
+    "seed:cmh-ford-demo": "node scripts/seed-cmh-ford-demo.cjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",
@@ -32,6 +39,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.43",
+    "@types/pg": "^8.21.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.5",
@@ -40,6 +48,7 @@
     "eslint-config-next": "16.3.0",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^30.0.1",
+    "pg": "^8.23.0",
     "prettier": "^3.9.6",
     "tailwindcss": "^4",
     "typescript": "^5",
