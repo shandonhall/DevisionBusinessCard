@@ -14,7 +14,7 @@ function monogram(model: PublicCardViewModel) {
 }
 
 /**
- * Chromatic smoked-acrylic identity object — layered depth, true flip, integrated portrait.
+ * Chromatic smoked-acrylic identity object - layered depth, true flip, integrated portrait.
  * Motion coordinates come from CSS vars (--dim-*) set by usePointerTilt on the shell.
  */
 export function DimensionalIdentityCard({
@@ -79,7 +79,7 @@ export function DimensionalIdentityCard({
             <div
               className={`dim-card-flipper ${flipped ? "is-flipped" : ""} ${reducedMotion ? "dim-flip-instant" : ""}`}
             >
-            {/* Thickness / rear extrusion — reads under tilt */}
+            {/* Thickness / rear extrusion - reads under tilt */}
             <div className="dim-card-depth" aria-hidden style={{ borderRadius: corner }} />
             <div className="dim-card-depth dim-card-depth-b" aria-hidden style={{ borderRadius: corner }} />
             <div className="dim-card-rim dim-card-rim-left" aria-hidden />
@@ -105,7 +105,7 @@ export function DimensionalIdentityCard({
               <div className="dim-grain" aria-hidden />
               <div className="dim-front-glass" aria-hidden />
 
-              {/* Portrait — integrated into material, not a hard column */}
+              {/* Portrait - integrated into material, not a hard column */}
               <div
                 className={`dim-portrait-layer ${integrated ? "dim-portrait-integrated" : ""}`}
                 aria-hidden={!hasPhoto}

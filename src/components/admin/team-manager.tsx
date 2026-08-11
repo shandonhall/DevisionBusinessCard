@@ -72,12 +72,12 @@ export function TeamManager({
 
   const brandName = useMemo(() => {
     const map = new Map(brands.map((b) => [b.id, b.name]));
-    return (id: string | null) => (id ? map.get(id) ?? "—" : "—");
+    return (id: string | null) => (id ? map.get(id) ?? "-" : "-");
   }, [brands]);
 
   const locationName = useMemo(() => {
     const map = new Map(locations.map((l) => [l.id, l.name]));
-    return (id: string | null) => (id ? map.get(id) ?? "—" : "—");
+    return (id: string | null) => (id ? map.get(id) ?? "-" : "-");
   }, [locations]);
 
   return (
@@ -313,7 +313,7 @@ export function TeamManager({
                 )}
                 <div className="text-sm text-[var(--brand-muted-text)]">
                   {editing.user_id
-                    ? "Login linked — they can edit via My card."
+                    ? "Login linked - they can edit via My card."
                     : "Not linked to a login yet."}
                 </div>
               </div>

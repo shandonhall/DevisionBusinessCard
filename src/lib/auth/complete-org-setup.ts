@@ -7,7 +7,7 @@ import { createOrganisationSchema } from "@/lib/validation/auth";
 
 /**
  * Completes org bootstrap after email confirmation (or when signup
- * returned no session). Safe to call repeatedly — no-ops if memberships exist.
+ * returned no session). Safe to call repeatedly - no-ops if memberships exist.
  */
 export async function completePendingOrganisationSetup(
   user: User,

@@ -3,7 +3,7 @@ import type { BrandVisualDNA, ExperienceConfig } from "@/lib/experience/types";
 import { driveExperienceConfig, driveVisualDNA } from "@/lib/experience/defaults";
 
 /**
- * Drive marque identity — visual expression within the shared Drive engine.
+ * Drive marque identity - visual expression within the shared Drive engine.
  * Never branch on organisation.name; resolve from employee marque assignments.
  */
 export type DriveMarqueId = "agg" | "geely" | "jetour" | "mg" | "jac";
@@ -36,7 +36,7 @@ export type DriveMarqueConfig = {
   >;
   visual: Partial<BrandVisualDNA>;
   experience: Partial<ExperienceConfig>;
-  /** Tagline under the dock — marque-neutral or brand-fitting. */
+  /** Tagline under the dock - marque-neutral or brand-fitting. */
   taglineHtml: { lead: string; strongA: string; mid: string; strongB: string };
 };
 

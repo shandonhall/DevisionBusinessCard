@@ -3,7 +3,7 @@
 import type { BrandDNA, ExperienceQuality } from "@/lib/experience/types";
 
 /**
- * Dark automotive studio — softbox, champagne key, cool fill, floor bounce.
+ * Dark automotive studio - softbox, champagne key, cool fill, floor bounce.
  */
 export function DriveBackground({
   dna,

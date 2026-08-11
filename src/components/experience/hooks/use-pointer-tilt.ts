@@ -33,7 +33,7 @@ function writeVars(el: HTMLElement | null, state: TiltState) {
 
 /**
  * Pointer tilt + studio light coordinates.
- * Writes CSS custom properties on `rootRef` via rAF — no React state per frame.
+ * Writes CSS custom properties on `rootRef` via rAF - no React state per frame.
  * Light (--dim-lx/ly) tracks pointer with independent lag for specular behaviour.
  */
 export function usePointerTilt(options: {

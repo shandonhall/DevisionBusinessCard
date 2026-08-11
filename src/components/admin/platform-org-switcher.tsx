@@ -6,7 +6,7 @@ import {
 import { listAccessibleOrganisations } from "@/lib/db/organisations";
 import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 
-/** Platform admins only — loads tenant list for the dashboard switcher. */
+/** Platform admins only - loads tenant list for the dashboard switcher. */
 export async function PlatformOrgSwitcher() {
   const context = await getAuthContext();
   if (!context || !canAccessPlatformAdmin(context.profile)) {

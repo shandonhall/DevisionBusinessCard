@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-/** HttpOnly cookie — platform admins only may set via switch action. */
+/** HttpOnly cookie - platform admins only may set via switch action. */
 export const ACTIVE_ORGANISATION_COOKIE = "devision-active-organisation-id";
 
 export async function readActiveOrganisationCookie(): Promise<string | null> {

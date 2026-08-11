@@ -22,7 +22,7 @@ function whatsappHref(value: string) {
 }
 
 /**
- * Premium contact dock — subordinate to the acrylic identity object.
+ * Premium contact dock - subordinate to the acrylic identity object.
  * Same vCard / share / QR / tel / mailto contracts as before.
  */
 export function DimensionContactInterface({
@@ -237,7 +237,7 @@ export function DimensionContactInterface({
             </div>
             {!isPublic ? (
               <p className="mt-3 text-center text-xs text-amber-300/90">
-                Card is not public yet — scanners will only work after publish.
+                Card is not public yet - scanners will only work after publish.
               </p>
             ) : (
               <a

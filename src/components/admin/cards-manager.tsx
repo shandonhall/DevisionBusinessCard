@@ -199,7 +199,7 @@ export function CardsManager({
               const path = `/${organisationSlug}/${card.slug}`;
               const isActive = card.public_status === "active";
               const driveBrand = cardDriveBrand(card);
-              const locationName = card.employee?.location?.name || "—";
+              const locationName = card.employee?.location?.name || "-";
               const isDemo = Boolean(
                 card.employee?.employee_reference?.startsWith("demo-"),
               );

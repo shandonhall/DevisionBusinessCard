@@ -1,6 +1,6 @@
 /**
  * Seed AGG Motors org for Milestone B verification.
- * Idempotent on org slug `agg` — skips create if already present.
+ * Idempotent on org slug `agg` - skips create if already present.
  *
  * Usage: node scripts/bootstrap-agg-org.cjs
  */
@@ -69,7 +69,7 @@ const LOCATIONS = [
     );
     if (existing.rows.length > 0) {
       await client.query("rollback");
-      console.log("SKIP — org already exists", existing.rows[0]);
+      console.log("SKIP - org already exists", existing.rows[0]);
       await client.end();
       return;
     }
@@ -89,7 +89,7 @@ const LOCATIONS = [
       [USER_ID, organisationId],
     );
 
-    // AGG corporate kit + drive preset (no org-name branching — DNA via preset)
+    // AGG corporate kit + drive preset (no org-name branching - DNA via preset)
     const kit = await client.query(
       `insert into public.brand_kits (
          organisation_id, name,

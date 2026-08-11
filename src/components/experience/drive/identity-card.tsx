@@ -16,7 +16,7 @@ function monogram(model: PublicCardViewModel) {
 }
 
 /**
- * Shared Drive identity object — content rules depend on resolved driveMarque.
+ * Shared Drive identity object - content rules depend on resolved driveMarque.
  */
 export function DriveIdentityCard({
   model,

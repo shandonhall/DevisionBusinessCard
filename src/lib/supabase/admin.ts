@@ -5,7 +5,7 @@ import type { Database } from "@/types/database";
 import { getServerEnv, hasSupabaseServiceRole } from "@/lib/validation/env";
 
 /**
- * Service-role client — bypasses RLS.
+ * Service-role client - bypasses RLS.
  * SERVER-ONLY. Never import this into Client Components or expose to the browser.
  * Use sparingly for trusted platform-admin / system operations after Milestone 1.
  */

@@ -38,7 +38,7 @@ export function CardActionBar({
         });
         return;
       } catch {
-        // User cancelled or share failed — fall through to copy.
+        // User cancelled or share failed - fall through to copy.
       }
     }
     await copyLink();
@@ -158,7 +158,7 @@ export function CardActionBar({
 
             {!isPublic ? (
               <p className="mt-3 text-center text-xs text-amber-700 dark:text-amber-300">
-                Card is not public yet — scanners will only work after publish.
+                Card is not public yet - scanners will only work after publish.
               </p>
             ) : (
               <p className="mt-3 text-center text-xs" style={{ color: "var(--brand-muted-text)" }}>

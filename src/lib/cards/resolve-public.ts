@@ -82,7 +82,7 @@ export function parsePublicCardResolution(
   return { type: "missing" };
 }
 
-/** Pure helper for tests — draft/archived must never be treated as public. */
+/** Pure helper for tests - draft/archived must never be treated as public. */
 export function isPubliclyReachableStatus(
   status: "draft" | "active" | "paused" | "archived",
 ): "render" | "paused" | "hidden" {

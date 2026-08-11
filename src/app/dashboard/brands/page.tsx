@@ -24,7 +24,7 @@ export default async function BrandsPage() {
         <p className="text-[var(--brand-muted-text)]">
           Vehicle marques under {organisation.name} (AGG Motors, Geely,
           Jetour, MG, JAC). Drive visual DNA for each marque is applied
-          automatically from employee marque assignments — edit name,
+          automatically from employee marque assignments - edit name,
           website, and logo path here; advanced material/lighting stays in
           the Drive marque presets.
         </p>

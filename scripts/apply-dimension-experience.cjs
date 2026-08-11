@@ -24,7 +24,7 @@ function readEnv(key) {
   await client.query(migration);
   console.log("migration applied");
 
-  // Enable Dimension for DeVision kits by organisation slug / brand website — data only.
+  // Enable Dimension for DeVision kits by organisation slug / brand website - data only.
   const updated = await client.query(
     `update public.brand_kits bk
      set experience_preset = 'dimension',

@@ -22,7 +22,7 @@ function CardFooter({ model }: { model: PublicCardViewModel }) {
 
 /**
  * Executive: a single elevated "sheet" floating over a quiet, brand-tinted
- * atmosphere — like a physical card laid on a desk. Calm depth, one sheen.
+ * atmosphere - like a physical card laid on a desk. Calm depth, one sheen.
  */
 export function ExecutiveLayout({
   model,

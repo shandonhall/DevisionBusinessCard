@@ -12,7 +12,7 @@ const AUTH_PREFIXES = [
 
 /**
  * Refresh auth cookies and enforce route protection.
- * UI redirects are a convenience — server pages also call requireAuthContext().
+ * UI redirects are a convenience - server pages also call requireAuthContext().
  */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({

@@ -73,7 +73,7 @@ export async function signInAction(
 }
 
 /**
- * Public user signup. Creates an auth account only — no organisation,
+ * Public user signup. Creates an auth account only - no organisation,
  * no organisation_admin membership. Admins invite staff via Team first;
  * matching email claims the employee profile after sign-in.
  */
@@ -113,7 +113,7 @@ export async function signUpUserAction(
   }
 
   if (!data.user) {
-    return { error: "Signup failed — no user returned" };
+    return { error: "Signup failed - no user returned" };
   }
 
   if (data.session) {
@@ -175,7 +175,7 @@ export async function signUpAction(
   }
 
   if (!data.user) {
-    return { error: "Signup failed — no user returned" };
+    return { error: "Signup failed - no user returned" };
   }
 
   if (data.session) {

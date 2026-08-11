@@ -15,7 +15,7 @@ import {
 } from "@/lib/experience/drive-marque";
 
 /**
- * Shared Drive engine — marque personality via Brand DNA / data-marque.
+ * Shared Drive engine - marque personality via Brand DNA / data-marque.
  * Never branches on organisation.name.
  */
 export function DriveCardExperience({

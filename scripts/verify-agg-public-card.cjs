@@ -48,7 +48,7 @@ function readEnv(key) {
     console.error("FAIL: expected 4 marques, got", marques);
     process.exit(1);
   }
-  console.log("OK — public card resolves with drive + marques");
+  console.log("OK - public card resolves with drive + marques");
   await client.end();
 })().catch((e) => {
   console.error(e.message);

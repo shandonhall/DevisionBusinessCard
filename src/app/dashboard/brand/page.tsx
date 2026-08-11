@@ -28,7 +28,7 @@ export default async function BrandPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Brand kit</h1>
           <p className="max-w-2xl text-[var(--brand-muted-text)]">
-            Configure organisation-level colours, typography and logo — or
+            Configure organisation-level colours, typography and logo - or
             import them from your website. Cards inherit these tokens unless a
             later brand/location override is set.
           </p>

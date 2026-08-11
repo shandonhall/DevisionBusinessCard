@@ -10,7 +10,7 @@ import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 const organisationIdSchema = z.string().uuid();
 
 /**
- * Platform admins only — sets the active dashboard tenant cookie.
+ * Platform admins only - sets the active dashboard tenant cookie.
  */
 export async function switchActiveOrganisationAction(
   formData: FormData,

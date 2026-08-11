@@ -44,7 +44,7 @@ export const changePasswordSchema = z
     path: ["newPassword"],
   });
 
-/** Team / employee account signup — does not create an organisation admin. */
+/** Team / employee account signup - does not create an organisation admin. */
 export const userSignUpSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
   email: z.string().trim().email(),

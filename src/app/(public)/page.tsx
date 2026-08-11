@@ -21,7 +21,7 @@ export default function HomePage() {
         </h1>
         <p className="max-w-2xl text-lg text-[var(--brand-muted-text)]">
           Digital business cards for organisations and teams. Sign in with the
-          account your admin provided — or create a staff account if you were
+          account your admin provided - or create a staff account if you were
           already added on Team.
         </p>
         <div className="flex flex-wrap gap-3 pt-2">
@@ -42,7 +42,7 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Staff accounts</CardTitle>
             <CardDescription>
-              Sign up only creates a login — not an organisation admin
+              Sign up only creates a login - not an organisation admin
             </CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-[var(--brand-muted-text)]">

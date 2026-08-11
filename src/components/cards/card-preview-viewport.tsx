@@ -9,7 +9,7 @@ type PreviewMode = "desktop" | "mobile";
 
 /**
  * Admin-only viewport switcher for card preview.
- * Mobile frame targets ~390px — typical phone width for Drive QA.
+ * Mobile frame targets ~390px - typical phone width for Drive QA.
  */
 export function CardPreviewViewport({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<PreviewMode>("desktop");

@@ -47,7 +47,7 @@ export async function getDefaultBrandKit(
 
 /**
  * Ensures every organisation has a default brand kit (idempotent).
- * Called from brand editor / org create — never hard-codes a client.
+ * Called from brand editor / org create - never hard-codes a client.
  */
 export async function ensureDefaultBrandKit(
   organisationId: string,

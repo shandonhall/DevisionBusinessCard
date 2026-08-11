@@ -3,7 +3,7 @@
 import type { BrandDNA, ExperienceQuality } from "@/lib/experience/types";
 
 /**
- * Dark product-studio field — brand colour as off-canvas light only.
+ * Dark product-studio field - brand colour as off-canvas light only.
  * Parallax via CSS vars (--dim-px / --dim-py) on the shell.
  */
 export function DimensionBackground({

@@ -22,7 +22,7 @@ function escapeVCard(value: string) {
 
 /**
  * Build a vCard 3.0 string for contact download.
- * Analytics should label this as vcard_download — not "contact saved".
+ * Analytics should label this as vcard_download - not "contact saved".
  */
 export function buildVCard(input: VCardInput): string {
   const lines = [

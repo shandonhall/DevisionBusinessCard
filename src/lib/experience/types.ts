@@ -73,7 +73,7 @@ export type BrandDNA = {
   tokens: DesignTokens;
   visual: BrandVisualDNA;
   experience: ExperienceConfig;
-  /** Drive marque expression — only set when experience.preset === "drive". */
+  /** Drive marque expression - only set when experience.preset === "drive". */
   driveMarque?: DriveMarqueId;
 };
 

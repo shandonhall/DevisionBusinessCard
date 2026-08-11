@@ -1,5 +1,5 @@
 /**
- * Pure permission helpers — unit-testable without Supabase.
+ * Pure permission helpers - unit-testable without Supabase.
  * Server loaders still re-check membership via RLS-backed queries.
  */
 

@@ -108,7 +108,7 @@ const DEMOS = [
     const org = await client.query(
       `select id from organisations where slug = 'agg'`,
     );
-    if (!org.rows[0]) throw new Error("AGG org missing — run bootstrap-agg-org.cjs first");
+    if (!org.rows[0]) throw new Error("AGG org missing - run bootstrap-agg-org.cjs first");
     const organisationId = org.rows[0].id;
 
     const brands = await client.query(
@@ -163,7 +163,7 @@ const DEMOS = [
             demo.whatsapp,
             primaryBrandId,
             locationId,
-            `DEMO record — fictional salesperson for ${demo.pageTitle} pitch preview.`,
+            `DEMO record - fictional salesperson for ${demo.pageTitle} pitch preview.`,
             demo.photo,
           ],
         );
@@ -189,7 +189,7 @@ const DEMOS = [
             demo.email,
             demo.mobile,
             demo.whatsapp,
-            `DEMO record — fictional salesperson for ${demo.pageTitle} pitch preview.`,
+            `DEMO record - fictional salesperson for ${demo.pageTitle} pitch preview.`,
             demo.key,
             demo.photo,
           ],

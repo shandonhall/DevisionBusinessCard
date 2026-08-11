@@ -2,7 +2,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 
 /**
- * Browser Supabase client — uses the anon key only.
+ * Browser Supabase client - uses the anon key only.
  * Never import service-role credentials here.
  */
 export function createClient() {

@@ -35,7 +35,7 @@ export const platformExperienceConfig: ExperienceConfig = {
 };
 
 /**
- * Dimension preset — chromatic smoked acrylic object in a studio-dark field.
+ * Dimension preset - chromatic smoked acrylic object in a studio-dark field.
  * Brand colours express as refraction / edge light, not filled UI panels.
  */
 export const dimensionExperienceConfig: ExperienceConfig = {
@@ -69,7 +69,7 @@ export const dimensionVisualDNA: BrandVisualDNA = {
 };
 
 /**
- * Drive preset — premium automotive studio / precision credential.
+ * Drive preset - premium automotive studio / precision credential.
  * Graphite-lacquer material, restrained reflections, AGG-ready hierarchy.
  * Visual implementation lands in Milestone C; DNA/config is ready now.
  */

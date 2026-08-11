@@ -21,7 +21,7 @@ function whatsappHref(value: string) {
 }
 
 /**
- * Premium automotive control dock — Save Contact primary, then tactility grid.
+ * Premium automotive control dock - Save Contact primary, then tactility grid.
  * Same action contracts as Dimension / legacy layouts.
  */
 export function DriveContactDock({

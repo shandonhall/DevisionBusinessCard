@@ -30,7 +30,7 @@ Organisations are never hard-coded in application logic. Branding resolves throu
 4. Location overrides  
 5. Card overrides  
 
-Most cards should inherit — avoid duplicating design fields on every card.
+Most cards should inherit - avoid duplicating design fields on every card.
 
 ## Supabase boundaries
 
@@ -58,22 +58,22 @@ Most cards should inherit — avoid duplicating design fields on every card.
 
 Tables (see `supabase/migrations/20260310140000_organisations_memberships.sql`):
 
-- `profiles` — 1:1 with `auth.users`; `is_platform_admin` for DeVision operators
-- `organisations` — tenants (slug for public URLs later)
-- `memberships` — user ↔ organisation role
+- `profiles` - 1:1 with `auth.users`; `is_platform_admin` for DeVision operators
+- `organisations` - tenants (slug for public URLs later)
+- `memberships` - user ↔ organisation role
 
 SQL helpers used by RLS: `is_platform_admin()`, `is_org_member(org_id)`, `has_org_role(org_id, roles[])`.
 
 App-layer checks (never rely on UI alone):
 
-- `src/lib/permissions/tenancy.ts` — pure functions (unit tested)
-- `src/lib/auth/session.ts` — `requireAuthContext`, `requirePlatformAdmin`, `requireOrganisationAccess`
+- `src/lib/permissions/tenancy.ts` - pure functions (unit tested)
+- `src/lib/auth/session.ts` - `requireAuthContext`, `requirePlatformAdmin`, `requireOrganisationAccess`
 
 ## Milestone 2 branding
 
 Tables / storage (see `supabase/migrations/20260310143000_brand_kits.sql`):
 
-- `brand_kits` — organisation-scoped design tokens (`brand_id` nullable until M3)
+- `brand_kits` - organisation-scoped design tokens (`brand_id` nullable until M3)
 - `organisations.default_brand_kit_id`
 - Storage bucket `organisation-assets` with path `{organisation_id}/logos/*`
 
@@ -87,16 +87,16 @@ Token resolution (`src/lib/branding/tokens.ts`):
 
 Dashboard routes:
 
-- `/dashboard/brand` — kit editor + live mobile preview  
-- `/dashboard/settings` — organisation profile fields  
+- `/dashboard/brand` - kit editor + live mobile preview  
+- `/dashboard/settings` - organisation profile fields  
 
 ## Milestone 3 structure
 
 Tables (see `supabase/migrations/20260310150000_brands_locations_employees.sql`):
 
-- `brands` — org-scoped, unique `(organisation_id, slug)`
-- `locations` — belong to a brand, unique `(organisation_id, slug)`
-- `employees` — belong to org; optional `brand_id` / `location_id` with server-side ownership checks
+- `brands` - org-scoped, unique `(organisation_id, slug)`
+- `locations` - belong to a brand, unique `(organisation_id, slug)`
+- `employees` - belong to org; optional `brand_id` / `location_id` with server-side ownership checks
 
 Dashboard routes:
 
@@ -110,9 +110,9 @@ Phone numbers are normalised toward E.164 with a configurable default country ca
 
 Tables / RPC (see `supabase/migrations/20260310160000_cards.sql`):
 
-- `cards` — one card per employee, unique `(organisation_id, slug)`
-- `card_sections` — ordered enabled sections
-- `get_public_card(org_slug, card_slug)` — security definer RPC for anonymous reads of **active** cards only
+- `cards` - one card per employee, unique `(organisation_id, slug)`
+- `card_sections` - ordered enabled sections
+- `get_public_card(org_slug, card_slug)` - security definer RPC for anonymous reads of **active** cards only
 
 Public route: `/{organisationSlug}/{cardSlug}`
 
@@ -141,8 +141,8 @@ Contact row actions (call / email / WhatsApp / website / LinkedIn) remain in sha
 
 Tables / RPC (see `supabase/migrations/20260310170000_publishing.sql`):
 
-- `card_slug_redirects` — maps old card slugs → current slug within an organisation
-- `resolve_public_card(org_slug, card_slug)` — returns `active` | `paused` | `redirect` | `missing`
+- `card_slug_redirects` - maps old card slugs → current slug within an organisation
+- `resolve_public_card(org_slug, card_slug)` - returns `active` | `paused` | `redirect` | `missing`
 
 Public behaviour:
 

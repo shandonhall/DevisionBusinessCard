@@ -3,7 +3,7 @@ import { CreateOrganisationSignUpForm } from "@/components/forms/create-organisa
 import { PLATFORM_NAME } from "@/lib/branding/platform";
 
 /**
- * Platform onboarding only — creates a tenant + organisation admin.
+ * Platform onboarding only - creates a tenant + organisation admin.
  * Not linked from AGG / client sign-in screens.
  */
 export default function CreateOrganisationPage() {

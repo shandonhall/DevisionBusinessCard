@@ -155,7 +155,7 @@ export function CardPreviewDemoSwitcher({
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-5 sm:px-6 sm:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--brand-card-radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
           <p>
-            Admin preview — this card status may be draft/paused and is not
+            Admin preview - this card status may be draft/paused and is not
             necessarily public.
           </p>
           <div className="flex gap-2">

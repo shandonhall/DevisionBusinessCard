@@ -88,21 +88,21 @@ See `.env.example` (names only). Never commit secrets.
 | `NEXT_PUBLIC_APP_URL` | Absolute app URL (auth redirects) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key (RLS enforced) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server only — never expose to the browser |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only - never expose to the browser |
 
 ## Milestone status
 
-- **Milestone 0** — Foundation (complete)
-- **Milestone 1** — Authentication + Tenancy (complete in code; requires Supabase + migration)
-- **Milestone 2** — Organisation + Brand Kit (complete in code; requires brand_kits migration)
-- **Milestone 3** — Structure: brands, locations, employees (complete in code; requires structure migration)
-- **Milestone 4** — Public card renderer + publishing (complete in code; requires cards migration)
-- **Milestone 5** — Card actions: vCard, share, copy, QR (complete)
-- **Milestone 6** — Publishing polish: draft/active/paused/archived, slug redirects, admin preview (complete in code; requires publishing migration)
-- **Next** — Milestone 7: Lead capture — awaiting approval
+- **Milestone 0** - Foundation (complete)
+- **Milestone 1** - Authentication + Tenancy (complete in code; requires Supabase + migration)
+- **Milestone 2** - Organisation + Brand Kit (complete in code; requires brand_kits migration)
+- **Milestone 3** - Structure: brands, locations, employees (complete in code; requires structure migration)
+- **Milestone 4** - Public card renderer + publishing (complete in code; requires cards migration)
+- **Milestone 5** - Card actions: vCard, share, copy, QR (complete)
+- **Milestone 6** - Publishing polish: draft/active/paused/archived, slug redirects, admin preview (complete in code; requires publishing migration)
+- **Next** - Milestone 7: Lead capture - awaiting approval
 
 ## Security notes
 
 - Private tables use RLS.
 - Server helpers in `src/lib/auth/session.ts` and `src/lib/permissions/tenancy.ts` re-check access.
-- Cross-tenant access must fail — covered by unit tests for permission helpers; RLS policies enforce the same rules in Postgres.
+- Cross-tenant access must fail - covered by unit tests for permission helpers; RLS policies enforce the same rules in Postgres.

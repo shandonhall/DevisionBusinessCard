@@ -362,13 +362,13 @@ export function extractBrandSuggestionFromHtml(
 
   if (brandish.length === 0) {
     notes.push(
-      "Few brand colours were detected — defaults were filled in. Adjust in the editor.",
+      "Few brand colours were detected - defaults were filled in. Adjust in the editor.",
     );
   } else {
     notes.push(`Detected ${brandish.length} usable brand colour(s) from the page.`);
   }
   if (logoUrl) notes.push("Found a logo / icon candidate from the page.");
-  else notes.push("No clear logo found — upload one manually if needed.");
+  else notes.push("No clear logo found - upload one manually if needed.");
   if (fonts.heading || fonts.body) {
     notes.push("Mapped site fonts to the closest curated font options.");
   }

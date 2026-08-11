@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Server-side environment validation.
- * Never import this module from Client Components — it may read service-role secrets.
+ * Never import this module from Client Components - it may read service-role secrets.
  */
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === undefined || value === null ? undefined : value;
@@ -76,7 +76,7 @@ export function hasSupabaseServiceRole(env: ServerEnv = getServerEnv()) {
   return Boolean(env.SUPABASE_SERVICE_ROLE_KEY && env.NEXT_PUBLIC_SUPABASE_URL);
 }
 
-/** Test helper — clears memoised env between cases. */
+/** Test helper - clears memoised env between cases. */
 export function resetServerEnvCache() {
   cachedEnv = null;
 }

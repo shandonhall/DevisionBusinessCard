@@ -3,7 +3,7 @@ import type { BrandKit, CardLayoutId } from "@/types/database";
 
 /**
  * Platform default design tokens.
- * Never hard-code client-specific values — resolve via inheritance.
+ * Never hard-code client-specific values - resolve via inheritance.
  */
 export type DesignTokens = {
   primary: string;
