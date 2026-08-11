@@ -401,8 +401,19 @@ export function TeamManager({
 
         <div className="rounded-[var(--brand-card-radius)] border border-[var(--brand-border)] bg-[var(--brand-surface)] p-5">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">
-            Team ({visible.length})
+            Team ({visible.length}
+            {employees.length !== visible.length
+              ? ` of ${employees.length}`
+              : ""}
+            )
           </h2>
+          {employees.length > 0 && visible.length === 0 ? (
+            <p className="mb-3 text-sm text-[var(--brand-muted-text)]">
+              {employees.length} employee
+              {employees.length === 1 ? "" : "s"} hidden by the current
+              filters. Try Status → All.
+            </p>
+          ) : null}
           <ul className="space-y-3">
             {visible.map((employee) => (
               <li

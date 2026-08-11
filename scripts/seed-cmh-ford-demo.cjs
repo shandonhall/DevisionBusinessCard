@@ -1,8 +1,9 @@
 /**
- * Phases 7-8: Refine CMH Ford Brand DNA + seed fictional DRAFT demo card.
+ * Phases 7-8: Refine CMH Ford Brand DNA + seed fictional demo employee/card.
  *
  * Demo employee: Jordan Naidoo (fictional) at CMH Ford Ballito.
- * Card status: draft (not publicly discoverable).
+ * Employee status: active (visible in Team).
+ * Card public_status: draft (not publicly discoverable).
  *
  * Idempotent on employee_reference = demo-cmh-ford-ballito
  * Does not modify AGG.
@@ -285,7 +286,7 @@ async function connect(pass) {
            first_name = $2, last_name = $3, display_name = $4,
            job_title = $5, department = $6, email = $7,
            mobile = $8, whatsapp = $9,
-           brand_id = $10, location_id = $11, status = 'draft',
+           brand_id = $10, location_id = $11, status = 'active',
            bio = $12, profile_photo_url = $13, updated_at = now()
          where id = $1`,
         [
@@ -312,7 +313,7 @@ async function connect(pass) {
            email, mobile, whatsapp, bio, status, employee_reference,
            profile_photo_url
          ) values (
-           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'draft', $13, $14
+           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'active', $13, $14
          ) returning id`,
         [
           organisationId,
