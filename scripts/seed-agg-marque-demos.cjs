@@ -27,6 +27,7 @@ const DEMOS = [
     locationSlug: null,
     marques: [],
     pageTitle: "Demo · AGG Group",
+    photo: "/demos/portraits/morgan-ellis.jpg",
   },
   {
     key: "demo-geely",
@@ -42,6 +43,7 @@ const DEMOS = [
     locationSlug: "northcliff",
     marques: ["geely"],
     pageTitle: "Demo · Geely",
+    photo: "/demos/portraits/alex-morgan.jpg",
   },
   {
     key: "demo-jetour",
@@ -57,6 +59,7 @@ const DEMOS = [
     locationSlug: "ontdekkers",
     marques: ["jetour"],
     pageTitle: "Demo · Jetour",
+    photo: "/demos/portraits/jordan-naidoo.jpg",
   },
   {
     key: "demo-mg",
@@ -72,6 +75,7 @@ const DEMOS = [
     locationSlug: "mg-bryanston",
     marques: ["mg"],
     pageTitle: "Demo · MG",
+    photo: "/demos/portraits/taylor-mokoena.jpg",
   },
   {
     key: "demo-jac",
@@ -87,6 +91,7 @@ const DEMOS = [
     locationSlug: "northcliff",
     marques: ["jac"],
     pageTitle: "Demo · JAC",
+    photo: "/demos/portraits/sam-daniels.jpg",
   },
 ];
 
@@ -144,7 +149,7 @@ const DEMOS = [
              job_title = $5, department = $6, email = $7,
              mobile = $8, whatsapp = $9,
              brand_id = $10, location_id = $11, status = 'active',
-             bio = $12, updated_at = now()
+             bio = $12, profile_photo_url = $13, updated_at = now()
            where id = $1`,
           [
             employeeId,
@@ -159,6 +164,7 @@ const DEMOS = [
             primaryBrandId,
             locationId,
             `DEMO record — fictional salesperson for ${demo.pageTitle} pitch preview.`,
+            demo.photo,
           ],
         );
       } else {
@@ -166,9 +172,10 @@ const DEMOS = [
           `insert into employees (
              organisation_id, brand_id, location_id,
              first_name, last_name, display_name, job_title, department,
-             email, mobile, whatsapp, bio, status, employee_reference
+             email, mobile, whatsapp, bio, status, employee_reference,
+             profile_photo_url
            ) values (
-             $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'active', $13
+             $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'active', $13, $14
            ) returning id`,
           [
             organisationId,
@@ -184,6 +191,7 @@ const DEMOS = [
             demo.whatsapp,
             `DEMO record — fictional salesperson for ${demo.pageTitle} pitch preview.`,
             demo.key,
+            demo.photo,
           ],
         );
         employeeId = emp.rows[0].id;
@@ -256,9 +264,21 @@ const DEMOS = [
         cardId,
         slug: demo.slug,
         marques: demo.marques,
+        photo: demo.photo,
         preview: `/dashboard/cards/${cardId}/preview`,
       });
     }
+
+    // Also refresh the original AGG seed salesperson portrait when present.
+    await client.query(
+      `update employees
+       set profile_photo_url = '/demos/portraits/thabo-molefe.jpg',
+           updated_at = now()
+       where organisation_id = $1
+         and email = 'thabo.molefe@agg.co.za'
+         and (profile_photo_url is null or profile_photo_url = '')`,
+      [organisationId],
+    );
 
     await client.query("commit");
     console.log(JSON.stringify({ ok: true, created }, null, 2));
