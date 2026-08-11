@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { writeActiveOrganisationCookie } from "@/lib/auth/active-organisation";
@@ -18,6 +19,20 @@ function safeNextPath(raw: FormDataEntryValue | null): string {
     return "/dashboard";
   }
   return value;
+}
+
+/**
+ * Keep the current dashboard path, but stamp `?org=` so the App Router
+ * cannot reuse a stale RSC payload from the previous tenant on the same URL.
+ */
+function redirectPathForOrganisation(
+  rawNext: FormDataEntryValue | null,
+  organisationId: string,
+): string {
+  const base = safeNextPath(rawNext);
+  const url = new URL(base, "http://local.invalid");
+  url.searchParams.set("org", organisationId);
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 /**
@@ -52,5 +67,6 @@ export async function switchActiveOrganisationAction(
   }
 
   await writeActiveOrganisationCookie(organisation.id);
-  redirect(safeNextPath(formData.get("next")));
+  revalidatePath("/dashboard", "layout");
+  redirect(redirectPathForOrganisation(formData.get("next"), organisation.id));
 }

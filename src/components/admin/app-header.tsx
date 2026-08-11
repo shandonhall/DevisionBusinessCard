@@ -76,11 +76,16 @@ export function AppHeader({
               </Link>
             ) : (
               <Link
-                href="/"
+                href="/dashboard"
                 className="shrink-0 text-[14px] font-semibold leading-none tracking-tight text-[var(--brand-text)] sm:text-[15px]"
               >
-                <span className="sm:hidden">{PLATFORM_SHORT_NAME}</span>
-                <span className="hidden sm:inline">{PLATFORM_NAME}</span>
+                <span className="sm:hidden">
+                  {(organisation?.name ?? PLATFORM_NAME).split(/\s+/)[0] ||
+                    PLATFORM_SHORT_NAME}
+                </span>
+                <span className="hidden sm:inline">
+                  {organisation?.name ?? PLATFORM_NAME}
+                </span>
               </Link>
             )}
             {title ? (

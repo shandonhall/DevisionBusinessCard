@@ -31,6 +31,7 @@ export default async function TeamPage() {
         </p>
       </div>
       <TeamManager
+        key={organisation.id}
         organisationId={organisation.id}
         brands={brands}
         locations={locations}

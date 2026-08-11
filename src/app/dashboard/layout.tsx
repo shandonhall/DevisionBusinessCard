@@ -30,7 +30,8 @@ export default async function DashboardLayout({
             : null
         }
       />
-      {children}
+      {/* Key forces dashboard pages to remount when the active tenant changes */}
+      <div key={organisation?.id ?? "no-org"}>{children}</div>
     </div>
   );
 }
