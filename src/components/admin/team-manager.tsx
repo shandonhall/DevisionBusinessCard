@@ -31,7 +31,8 @@ export function TeamManager({
   const [query, setQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("active");
+  // Default to all statuses so draft demo staff (e.g. CMH Ford) are visible.
+  const [statusFilter, setStatusFilter] = useState("");
   const [selectedBrand, setSelectedBrand] = useState(brands[0]?.id ?? "");
 
   const [createState, createAction, createPending] = useActionState(

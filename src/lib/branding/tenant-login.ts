@@ -23,6 +23,16 @@ const TENANT_LOGIN_BRANDS: Record<string, TenantLoginBrand> = {
     poweredBy: poweredByPlatformLabel(PLATFORM_NAME),
     logoOnDark: true,
   },
+  "cmh-motor-group": {
+    slug: "cmh-motor-group",
+    organisationName: "CMH Motor Group",
+    logoUrl: "/brands/cmh/cmh-mark.webp",
+    logoAlt: "CMH Motor Group",
+    headline: "Sign in",
+    description: "Sign in to CMH Motor Group",
+    poweredBy: poweredByPlatformLabel(PLATFORM_NAME),
+    logoOnDark: true,
+  },
 };
 
 export function resolveTenantLoginBrand(

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { readActiveOrganisationCookie } from "@/lib/auth/active-organisation";
@@ -112,6 +113,9 @@ export async function requireOrganisationAdmin(organisationId: string) {
 export async function getPrimaryOrganisation(
   context: AuthContext,
 ): Promise<Organisation | null> {
+  // Opt out of any request memoisation that could reuse a prior tenant.
+  await connection();
+
   const isPlatformAdmin = canAccessPlatformAdmin(context.profile);
   const preferred = isPlatformAdmin
     ? await readActiveOrganisationCookie()
