@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { switchActiveOrganisationAction } from "@/lib/auth/switch-organisation";
 
 export function OrganisationSwitcher({
@@ -9,17 +10,24 @@ export function OrganisationSwitcher({
   organisations: Array<{ id: string; name: string; slug: string }>;
   currentOrganisationId: string | null;
 }) {
+  const pathname = usePathname() || "/dashboard";
+
   if (organisations.length === 0) return null;
+
+  const selectedId = currentOrganisationId ?? organisations[0]?.id ?? "";
 
   return (
     <form action={switchActiveOrganisationAction} className="min-w-0">
+      <input type="hidden" name="next" value={pathname} />
       <label className="sr-only" htmlFor="active-organisation">
         Active organisation
       </label>
+      {/* key forces remount so the select shows the active tenant after redirect */}
       <select
+        key={selectedId}
         id="active-organisation"
         name="organisationId"
-        defaultValue={currentOrganisationId ?? organisations[0]?.id}
+        defaultValue={selectedId}
         onChange={(event) => {
           event.currentTarget.form?.requestSubmit();
         }}

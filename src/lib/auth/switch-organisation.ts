@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { writeActiveOrganisationCookie } from "@/lib/auth/active-organisation";
 import { requireAuthContext } from "@/lib/auth/session";
@@ -9,8 +9,21 @@ import { canAccessPlatformAdmin } from "@/lib/permissions/tenancy";
 
 const organisationIdSchema = z.string().uuid();
 
+/** Same-origin relative path only (open-redirect safe). */
+function safeNextPath(raw: FormDataEntryValue | null): string {
+  if (typeof raw !== "string") return "/dashboard";
+  const value = raw.trim();
+  if (!value.startsWith("/")) return "/dashboard";
+  if (value.startsWith("//") || value.includes("\\") || /[\r\n]/.test(value)) {
+    return "/dashboard";
+  }
+  return value;
+}
+
 /**
- * Platform admins only - sets the active dashboard tenant cookie.
+ * Platform admins only - sets the active dashboard tenant cookie, then
+ * redirects so the next request reads the new cookie (revalidate alone can
+ * re-render with the previous request cookies and appear to "bounce back").
  */
 export async function switchActiveOrganisationAction(
   formData: FormData,
@@ -39,6 +52,5 @@ export async function switchActiveOrganisationAction(
   }
 
   await writeActiveOrganisationCookie(organisation.id);
-  revalidatePath("/dashboard", "layout");
-  revalidatePath("/admin", "layout");
+  redirect(safeNextPath(formData.get("next")));
 }
