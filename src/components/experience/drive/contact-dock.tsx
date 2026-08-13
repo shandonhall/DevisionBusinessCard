@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
+import type { AnalyticsTracker } from "@/lib/analytics/types";
+import { withAttribution } from "@/lib/analytics/source";
 
 function whatsappHref(value: string) {
   return `https://wa.me/${value.replace(/\D/g, "")}`;
@@ -28,10 +30,12 @@ export function DriveContactDock({
   model,
   absoluteCardUrl,
   websiteOverride,
+  tracker,
 }: {
   model: PublicCardViewModel;
   absoluteCardUrl: string;
   websiteOverride?: string | null;
+  tracker?: AnalyticsTracker;
 }) {
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -41,6 +45,8 @@ export function DriveContactDock({
   const isPublic = model.card.publicStatus === "active";
   const website =
     websiteOverride || model.brand?.website || model.organisation.website;
+  const shareUrl = withAttribution(absoluteCardUrl, "shared");
+  const qrUrl = withAttribution(absoluteCardUrl, "qr");
 
   const quick = [
     model.employee.mobile
@@ -87,12 +93,13 @@ export function DriveContactDock({
   }, [qrOpen]);
 
   async function handleShare() {
+    tracker?.track({ eventType: "share_click" });
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
           title: model.employee.displayName,
           text: `${model.employee.displayName} · ${model.organisation.name}`,
-          url: absoluteCardUrl,
+          url: shareUrl,
         });
         return;
       } catch {
@@ -104,7 +111,8 @@ export function DriveContactDock({
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(absoluteCardUrl);
+      await navigator.clipboard.writeText(shareUrl);
+      tracker?.track({ eventType: "copy_link" });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -115,7 +123,12 @@ export function DriveContactDock({
   return (
     <div className="drive-dock">
       {isPublic ? (
-        <a href={vcardUrl} className="drive-dock__save" download>
+        <a
+          href={vcardUrl}
+          className="drive-dock__save"
+          download
+          onClick={() => tracker?.track({ eventType: "save_contact" })}
+        >
           <Download className="size-[1.05rem]" strokeWidth={1.75} aria-hidden />
           Save Contact
         </a>
@@ -135,6 +148,18 @@ export function DriveContactDock({
                 key={key}
                 href={href}
                 className="drive-dock__btn"
+                onClick={() => {
+                  if (key === "call") tracker?.track({ eventType: "call_click" });
+                  if (key === "whatsapp") {
+                    tracker?.track({ eventType: "whatsapp_click" });
+                  }
+                  if (key === "email") {
+                    tracker?.track({ eventType: "email_click" });
+                  }
+                  if (key === "website") {
+                    tracker?.track({ eventType: "website_click" });
+                  }
+                }}
                 {...(key === "website"
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {})}
@@ -198,7 +223,7 @@ export function DriveContactDock({
               </button>
             </div>
             <div className="drive-qr-modal__code">
-              <QrCodeBlock value={absoluteCardUrl} size={200} />
+              <QrCodeBlock value={qrUrl} size={200} />
             </div>
             <a href={qrPageUrl} className="drive-qr-modal__link">
               Open fullscreen QR

@@ -6,13 +6,20 @@ import { PlatformPoweredBy } from "@/components/branding/platform-powered-by";
 import { CardShell } from "@/components/card-sections/primitives";
 import { useExperienceQuality } from "@/components/experience/hooks/use-experience-quality";
 import { usePointerTilt } from "@/components/experience/hooks/use-pointer-tilt";
+import { usePresentationMode } from "@/components/experience/hooks/use-presentation-mode";
 import { DriveBackground } from "@/components/experience/drive/background";
 import { DriveIdentityCard } from "@/components/experience/drive/identity-card";
 import { DriveContactDock } from "@/components/experience/drive/contact-dock";
+import { DriveStudioFrame } from "@/components/experience/drive/drive-studio-frame";
+import { DriveCampaignSlot } from "@/components/experience/drive/drive-campaign-slot";
 import {
   getDriveMarqueConfig,
   type DriveMarqueId,
 } from "@/lib/experience/drive-marque";
+import type { ResolvedCampaign } from "@/lib/campaigns/types";
+import type { PublicAnalyticsContext } from "@/lib/analytics/types";
+import { usePublicAnalytics } from "@/components/experience/hooks/use-public-analytics";
+import { withAttribution } from "@/lib/analytics/source";
 
 /**
  * Shared Drive engine - marque personality via Brand DNA / data-marque.
@@ -21,17 +28,23 @@ import {
 export function DriveCardExperience({
   model,
   absoluteCardUrl,
+  campaigns = [],
+  analyticsContext = null,
 }: {
   model: PublicCardViewModel;
   absoluteCardUrl: string;
+  campaigns?: ResolvedCampaign[];
+  analyticsContext?: PublicAnalyticsContext | null;
 }) {
   const dna = model.brandDNA;
   const marque: DriveMarqueId = dna.driveMarque ?? "agg";
   const marqueConfig = getDriveMarqueConfig(marque);
   const quality = useExperienceQuality(dna.experience.allowAdvancedEffects);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const presentation = usePresentationMode(shellRef);
+  const tracker = usePublicAnalytics(analyticsContext);
   const reducedMotion = quality === "essential";
   const interactive = !reducedMotion && dna.experience.tiltStrength > 0;
-  const shellRef = useRef<HTMLDivElement>(null);
 
   const { handlers } = usePointerTilt({
     enabled: interactive,
@@ -46,11 +59,17 @@ export function DriveCardExperience({
     model.brand?.logoUrl ||
     undefined;
 
+  const leftCampaign = campaigns.find((item) => item.placement === "desktop_left");
+  const rightCampaign = campaigns.find(
+    (item) => item.placement === "desktop_right",
+  );
+
   return (
     <CardShell
       model={model}
       className="drive-shell relative isolate overflow-x-hidden"
       data-marque={marque}
+      data-presentation={presentation}
       style={{
         background: model.tokens.background,
         color: model.tokens.text,
@@ -61,7 +80,7 @@ export function DriveCardExperience({
     >
       <div
         ref={shellRef}
-        className="relative min-h-screen"
+        className="drive-stage relative min-h-screen"
         style={
           {
             "--dim-rx": "1.2",
@@ -77,37 +96,68 @@ export function DriveCardExperience({
       >
         <DriveBackground dna={dna} quality={quality} />
 
-        <main className="drive-main relative z-[1] mx-auto flex w-full max-w-[30rem] flex-col gap-5 px-4 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[max(1.35rem,env(safe-area-inset-top))] sm:max-w-[34rem] sm:gap-6 sm:px-6 sm:pb-16 sm:pt-12 md:max-w-[38rem] md:gap-7 md:pt-14">
-          <div className="drive-enter drive-enter-1">
-            <DriveIdentityCard
-              model={model}
-              dna={dna}
-              logoUrl={logoUrl}
-              marque={marque}
-              handlers={handlers}
-              interactive={interactive}
-              reducedMotion={reducedMotion}
-            />
-          </div>
-
-          <div className="drive-enter drive-enter-2">
-            <DriveContactDock
-              model={model}
-              absoluteCardUrl={absoluteCardUrl}
-              websiteOverride={marqueConfig.website}
-            />
-          </div>
-
-          <p className="drive-enter drive-enter-3 drive-tagline text-center">
-            {marqueConfig.taglineHtml.lead}{" "}
-            <strong>{marqueConfig.taglineHtml.strongA}</strong>
-            {marqueConfig.taglineHtml.mid}{" "}
-            <strong>{marqueConfig.taglineHtml.strongB}</strong>.
-          </p>
-
-          {!model.organisation.whiteLabelEnabled ? (
-            <PlatformPoweredBy className="drive-enter drive-enter-3 text-center text-xs text-white/25" />
-          ) : null}
+        <main className="drive-main relative z-[1] w-full px-4 py-[max(1.35rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-12">
+          <DriveStudioFrame
+            presentation={presentation}
+            leftSlot={
+              leftCampaign ? (
+                <DriveCampaignSlot
+                  campaign={leftCampaign}
+                  tracker={tracker}
+                />
+              ) : null
+            }
+            rightSlot={
+              rightCampaign ? (
+                <DriveCampaignSlot
+                  campaign={rightCampaign}
+                  tracker={tracker}
+                />
+              ) : null
+            }
+            card={
+              <DriveIdentityCard
+                model={model}
+                dna={dna}
+                logoUrl={logoUrl}
+                marque={marque}
+                handlers={handlers}
+                interactive={interactive}
+                reducedMotion={reducedMotion}
+                qrValue={withAttribution(absoluteCardUrl, "qr")}
+                onFlip={(to) => {
+                  tracker?.track({
+                    eventType: "card_flip",
+                    metadata: {
+                      from: to === "back" ? "front" : "back",
+                      to,
+                    },
+                  });
+                }}
+              />
+            }
+            dock={
+              <DriveContactDock
+                model={model}
+                absoluteCardUrl={absoluteCardUrl}
+                websiteOverride={marqueConfig.website}
+                tracker={tracker}
+              />
+            }
+            footer={
+              <>
+                <p className="drive-tagline text-center">
+                  {marqueConfig.taglineHtml.lead}{" "}
+                  <strong>{marqueConfig.taglineHtml.strongA}</strong>
+                  {marqueConfig.taglineHtml.mid}{" "}
+                  <strong>{marqueConfig.taglineHtml.strongB}</strong>.
+                </p>
+                {!model.organisation.whiteLabelEnabled ? (
+                  <PlatformPoweredBy className="mt-3 text-center text-xs text-white/25" />
+                ) : null}
+              </>
+            }
+          />
         </main>
       </div>
     </CardShell>

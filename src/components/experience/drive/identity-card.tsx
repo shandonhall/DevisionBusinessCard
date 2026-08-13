@@ -1,5 +1,6 @@
 "use client";
 
+import { useId, useState } from "react";
 import type { BrandDNA } from "@/lib/experience/types";
 import type { DriveMarqueId } from "@/lib/experience/drive-marque";
 import {
@@ -7,6 +8,7 @@ import {
   isVehicleMarqueSlug,
 } from "@/lib/experience/drive-marque";
 import type { PublicCardViewModel } from "@/types/card";
+import { DriveCardReverse } from "@/components/experience/drive/drive-card-reverse";
 
 function monogram(model: PublicCardViewModel) {
   return (
@@ -17,6 +19,7 @@ function monogram(model: PublicCardViewModel) {
 
 /**
  * Shared Drive identity object - content rules depend on resolved driveMarque.
+ * Physical front/back flip uses CSS 3D (same pattern as Dimension).
  */
 export function DriveIdentityCard({
   model,
@@ -26,6 +29,8 @@ export function DriveIdentityCard({
   handlers,
   interactive,
   reducedMotion,
+  qrValue,
+  onFlip,
 }: {
   model: PublicCardViewModel;
   dna: BrandDNA;
@@ -40,7 +45,11 @@ export function DriveIdentityCard({
   };
   interactive: boolean;
   reducedMotion: boolean;
+  qrValue: string;
+  onFlip?: (next: "front" | "back") => void;
 }) {
+  const [flipped, setFlipped] = useState(false);
+  const labelId = useId();
   const hasPhoto = Boolean(model.employee.profilePhotoUrl);
   const marqueConfig = getDriveMarqueConfig(marque);
   const isSingleMarque = marque !== "agg";
@@ -59,6 +68,14 @@ export function DriveIdentityCard({
     ? []
     : model.marques.filter((m) => isVehicleMarqueSlug(m.slug));
 
+  function toggleFlip() {
+    setFlipped((current) => {
+      const next = !current;
+      onFlip?.(next ? "back" : "front");
+      return next;
+    });
+  }
+
   return (
     <div className="drive-identity-stage relative mx-auto w-full">
       <div className="drive-card-shadow drive-card-shadow--ambient" aria-hidden />
@@ -75,114 +92,160 @@ export function DriveIdentityCard({
           <div
             className={`drive-card-tilt ${interactive && !reducedMotion ? "drive-card-tilt--live" : ""}`}
           >
-            <article
-              className="drive-card"
-              style={
-                {
-                  "--drive-reflect": String(dna.experience.reflectionStrength),
-                } as React.CSSProperties
-              }
+            <div
+              className={`drive-card-flipper ${flipped ? "is-flipped" : ""} ${reducedMotion ? "drive-flip-instant" : ""}`}
             >
-              <div className="drive-card__underside" aria-hidden />
-              <div className="drive-card__depth" aria-hidden />
-              <div className="drive-card__edge" aria-hidden />
+              <article
+                className="drive-card drive-card--front"
+                aria-hidden={flipped}
+                inert={flipped}
+                aria-labelledby={labelId}
+                style={
+                  {
+                    "--drive-reflect": String(dna.experience.reflectionStrength),
+                  } as React.CSSProperties
+                }
+              >
+                <div className="drive-card__underside" aria-hidden />
+                <div className="drive-card__depth" aria-hidden />
+                <div className="drive-card__edge" aria-hidden />
 
-              <div className="drive-card__body">
-                <div className="drive-card__base" aria-hidden />
-                <div className="drive-card__grain" aria-hidden />
-                <div className="drive-card__falloff" aria-hidden />
-                <div className="drive-card__rim" aria-hidden />
+                <div className="drive-card__body">
+                  <div className="drive-card__base" aria-hidden />
+                  <div className="drive-card__grain" aria-hidden />
+                  <div className="drive-card__falloff" aria-hidden />
+                  <div className="drive-card__rim" aria-hidden />
 
-              <div className="drive-card__badge">
-                  {marqueConfig.wordmark ? (
-                    <p
-                      className="drive-card__badge-wordmark"
-                      aria-label={marqueConfig.label}
-                    >
-                      {marqueConfig.wordmark}
-                    </p>
-                  ) : logoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={logoUrl}
-                      alt={marqueConfig.label}
-                      className={`drive-card__badge-logo${
-                        marque === "mg" || marque === "jac"
-                          ? " drive-card__badge-logo--mark"
-                          : ""
-                      }`}
-                      width={160}
-                      height={160}
-                    />
-                  ) : (
-                    <p
-                      className="drive-card__badge-wordmark"
-                      aria-label={marqueConfig.label}
-                    >
-                      {marqueConfig.label}
-                    </p>
-                  )}
-                </div>
-
-                <div className="drive-card__layout">
-                  <div className="drive-portrait">
-                    <div className="drive-portrait__well" aria-hidden />
-                    {hasPhoto ? (
+                  <div className="drive-card__badge">
+                    {marqueConfig.wordmark ? (
+                      <p
+                        className="drive-card__badge-wordmark"
+                        aria-label={marqueConfig.label}
+                      >
+                        {marqueConfig.wordmark}
+                      </p>
+                    ) : logoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={model.employee.profilePhotoUrl!}
-                        alt=""
-                        className="drive-portrait__img"
+                        src={logoUrl}
+                        alt={marqueConfig.label}
+                        className={`drive-card__badge-logo${
+                          marque === "mg" || marque === "jac"
+                            ? " drive-card__badge-logo--mark"
+                            : ""
+                        }`}
+                        width={160}
+                        height={160}
                       />
                     ) : (
-                      <div className="drive-monogram" aria-hidden>
-                        <div className="drive-monogram__inset" />
-                        <div className="drive-monogram__shine" />
-                        <span className="drive-monogram__glyph">
-                          {monogram(model)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="drive-portrait__grade" aria-hidden />
-                    <div className="drive-portrait__coat" aria-hidden />
-                    <div className="drive-portrait__rim" aria-hidden />
-                  </div>
-
-                  <div className="drive-identity">
-                    <h1 className="drive-name">{model.employee.displayName}</h1>
-                    {model.employee.jobTitle ? (
-                      <p className="drive-title">{model.employee.jobTitle}</p>
-                    ) : null}
-                    <p className="drive-location">{locationLine}</p>
-                    {isSingleMarque ? (
-                      <p className="drive-group-context">
-                        Part of {model.organisation.name}
+                      <p
+                        className="drive-card__badge-wordmark"
+                        aria-label={marqueConfig.label}
+                      >
+                        {marqueConfig.label}
                       </p>
-                    ) : null}
+                    )}
                   </div>
+
+                  <div className="drive-card__layout">
+                    <div className="drive-portrait">
+                      <div className="drive-portrait__well" aria-hidden />
+                      {hasPhoto ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={model.employee.profilePhotoUrl!}
+                          alt=""
+                          className="drive-portrait__img"
+                        />
+                      ) : (
+                        <div className="drive-monogram" aria-hidden>
+                          <div className="drive-monogram__inset" />
+                          <div className="drive-monogram__shine" />
+                          <span className="drive-monogram__glyph">
+                            {monogram(model)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="drive-portrait__grade" aria-hidden />
+                      <div className="drive-portrait__coat" aria-hidden />
+                      <div className="drive-portrait__rim" aria-hidden />
+                    </div>
+
+                    <div className="drive-identity">
+                      <h1 id={labelId} className="drive-name">
+                        {model.employee.displayName}
+                      </h1>
+                      {model.employee.jobTitle ? (
+                        <p className="drive-title">{model.employee.jobTitle}</p>
+                      ) : null}
+                      <p className="drive-location">{locationLine}</p>
+                      {isSingleMarque ? (
+                        <p className="drive-group-context">
+                          Part of {model.organisation.name}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {multiMarques.length > 1 ? (
+                    <ul className="drive-marques" aria-label="Represented brands">
+                      {multiMarques.map((item) => (
+                        <li key={item.id} className="drive-marque">
+                          <span className="drive-marque__text">{item.name}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  <div className="drive-card__softbox" aria-hidden />
+                  <div className="drive-card__specular" aria-hidden />
+                  <div
+                    className={`drive-card__sweep ${reducedMotion ? "drive-card__sweep--off" : ""}`}
+                    aria-hidden
+                  />
+                  <div className="drive-card__clearcoat" aria-hidden />
                 </div>
+              </article>
 
-                {multiMarques.length > 1 ? (
-                  <ul className="drive-marques" aria-label="Represented brands">
-                    {multiMarques.map((item) => (
-                      <li key={item.id} className="drive-marque">
-                        <span className="drive-marque__text">{item.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-
-                <div className="drive-card__softbox" aria-hidden />
-                <div className="drive-card__specular" aria-hidden />
-                <div
-                  className={`drive-card__sweep ${reducedMotion ? "drive-card__sweep--off" : ""}`}
-                  aria-hidden
-                />
-                <div className="drive-card__clearcoat" aria-hidden />
-              </div>
-            </article>
+              <article
+                className="drive-card drive-card--back"
+                aria-hidden={!flipped}
+                inert={!flipped}
+                style={
+                  {
+                    "--drive-reflect": String(dna.experience.reflectionStrength),
+                  } as React.CSSProperties
+                }
+              >
+                <div className="drive-card__underside" aria-hidden />
+                <div className="drive-card__depth" aria-hidden />
+                <div className="drive-card__edge" aria-hidden />
+                <div className="drive-card__body">
+                  <div className="drive-card__base" aria-hidden />
+                  <div className="drive-card__grain" aria-hidden />
+                  <div className="drive-card__falloff" aria-hidden />
+                  <div className="drive-card__rim" aria-hidden />
+                  <DriveCardReverse model={model} qrValue={qrValue} />
+                  <div className="drive-card__softbox" aria-hidden />
+                  <div className="drive-card__specular" aria-hidden />
+                  <div className="drive-card__clearcoat" aria-hidden />
+                </div>
+              </article>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="drive-flip-row">
+        <button
+          type="button"
+          className="drive-flip-affordance"
+          aria-pressed={flipped}
+          aria-label={flipped ? "Show front of card" : "Turn card over"}
+          onClick={toggleFlip}
+        >
+          {flipped ? "Front" : "Turn over"}
+        </button>
       </div>
     </div>
   );

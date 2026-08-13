@@ -5,9 +5,12 @@ import { CardUnavailablePage } from "@/components/cards/card-unavailable";
 import { resolvePublicCardRequest } from "@/lib/db/cards";
 import { getServerEnv } from "@/lib/validation/env";
 import { RESERVED_ORG_SLUGS } from "@/lib/validation/auth";
+import { parseTrafficSource } from "@/lib/analytics/source";
+import { listResolvedPublicCampaigns } from "@/lib/db/campaigns";
 
 type Props = {
   params: Promise<{ organisationSlug: string; cardSlug: string }>;
+  searchParams: Promise<{ src?: string }>;
 };
 
 function absoluteUrl(path: string) {
@@ -41,8 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: "Card not found" };
 }
 
-export default async function PublicCardPage({ params }: Props) {
+export default async function PublicCardPage({ params, searchParams }: Props) {
   const { organisationSlug, cardSlug } = await params;
+  const { src } = await searchParams;
 
   if ((RESERVED_ORG_SLUGS as readonly string[]).includes(organisationSlug)) {
     notFound();
@@ -69,6 +73,18 @@ export default async function PublicCardPage({ params }: Props) {
   }
 
   const model = resolved.view;
+  const source = parseTrafficSource(src);
+  let campaigns: Awaited<ReturnType<typeof listResolvedPublicCampaigns>> = [];
+  try {
+    campaigns = await listResolvedPublicCampaigns({
+      cardId: model.card.id,
+      organisationId: model.organisation.id,
+      brandId: model.brand?.id ?? null,
+      locationId: model.location?.id ?? null,
+    });
+  } catch {
+    campaigns = [];
+  }
 
   return (
     <>
@@ -79,6 +95,15 @@ export default async function PublicCardPage({ params }: Props) {
       <PublicCardRenderer
         model={model}
         absoluteCardUrl={absoluteUrl(model.card.publicPath)}
+        campaigns={campaigns}
+        analyticsContext={{
+          cardId: model.card.id,
+          organisationId: model.organisation.id,
+          employeeId: model.employee.id,
+          brandId: model.brand?.id ?? null,
+          locationId: model.location?.id ?? null,
+          source,
+        }}
       />
     </>
   );

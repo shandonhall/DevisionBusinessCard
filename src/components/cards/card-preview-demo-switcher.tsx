@@ -58,11 +58,13 @@ export function CardPreviewDemoSwitcher({
   const [activeId, setActiveId] = useState(initialCardId);
   const [cacheVersion, setCacheVersion] = useState(0);
   const [pendingId, setPendingId] = useState<string | null>(null);
-
-  const active = cacheRef.current.get(activeId) ?? {
+  const [readyIds, setReadyIds] = useState<Set<string>>(
+    () => new Set([initialCardId]),
+  );
+  const [active, setActive] = useState<CachedPreview>({
     model: initialModel,
     absoluteCardUrl: initialAbsoluteCardUrl,
-  };
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +80,7 @@ export function CardPreviewDemoSwitcher({
         model: result.model,
         absoluteCardUrl: result.absoluteCardUrl,
       });
+      setReadyIds((current) => new Set(current).add(cardId));
       const logo = result.model.tokens.logoUrl;
       if (logo) {
         const img = new window.Image();
@@ -106,6 +109,8 @@ export function CardPreviewDemoSwitcher({
       const cardId = match?.[1];
       if (cardId && cacheRef.current.has(cardId)) {
         setActiveId(cardId);
+        const cached = cacheRef.current.get(cardId);
+        if (cached) setActive(cached);
       }
     }
     window.addEventListener("popstate", onPopState);
@@ -118,6 +123,7 @@ export function CardPreviewDemoSwitcher({
     const cached = cacheRef.current.get(cardId);
     if (cached) {
       setActiveId(cardId);
+      setActive(cached);
       window.history.replaceState(
         null,
         "",
@@ -137,8 +143,13 @@ export function CardPreviewDemoSwitcher({
       model: result.model,
       absoluteCardUrl: result.absoluteCardUrl,
     });
+    setReadyIds((current) => new Set(current).add(cardId));
     setCacheVersion((value) => value + 1);
     setActiveId(cardId);
+    setActive({
+      model: result.model,
+      absoluteCardUrl: result.absoluteCardUrl,
+    });
     window.history.replaceState(null, "", `/dashboard/cards/${cardId}/preview`);
   }
 
@@ -180,7 +191,7 @@ export function CardPreviewDemoSwitcher({
             <div className="flex flex-wrap gap-2">
               {sorted.map((entry) => {
                 const selected = entry.cardId === activeId;
-                const ready = cacheRef.current.has(entry.cardId);
+                const ready = readyIds.has(entry.cardId);
                 const loading = pendingId === entry.cardId;
                 return (
                   <button

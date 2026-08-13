@@ -266,6 +266,11 @@ export function CardsManager({
                           Preview card
                         </Link>
                       </Button>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/dashboard/cards/${card.id}/analytics`}>
+                          Analytics
+                        </Link>
+                      </Button>
                       <Button
                         type="button"
                         size="sm"

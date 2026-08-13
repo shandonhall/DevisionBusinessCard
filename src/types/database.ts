@@ -683,6 +683,105 @@ export type Database = {
           },
         ];
       };
+      campaigns: {
+        Row: {
+          id: string;
+          organisation_id: string;
+          brand_id: string | null;
+          location_id: string | null;
+          name: string;
+          title: string;
+          body: string | null;
+          image_url: string | null;
+          cta_label: string | null;
+          cta_url: string | null;
+          placement: "desktop_left" | "desktop_right";
+          status: "draft" | "active" | "archived";
+          starts_at: string | null;
+          ends_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organisation_id: string;
+          brand_id?: string | null;
+          location_id?: string | null;
+          name: string;
+          title: string;
+          body?: string | null;
+          image_url?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          placement?: "desktop_left" | "desktop_right";
+          status?: "draft" | "active" | "archived";
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          organisation_id?: string;
+          brand_id?: string | null;
+          location_id?: string | null;
+          name?: string;
+          title?: string;
+          body?: string | null;
+          image_url?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          placement?: "desktop_left" | "desktop_right";
+          status?: "draft" | "active" | "archived";
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      card_analytics_events: {
+        Row: {
+          id: string;
+          organisation_id: string;
+          card_id: string;
+          employee_id: string | null;
+          brand_id: string | null;
+          location_id: string | null;
+          session_id: string;
+          event_type: string;
+          source: string;
+          occurred_at: string;
+          metadata: Json;
+        };
+        Insert: {
+          id?: string;
+          organisation_id: string;
+          card_id: string;
+          employee_id?: string | null;
+          brand_id?: string | null;
+          location_id?: string | null;
+          session_id: string;
+          event_type: string;
+          source?: string;
+          occurred_at?: string;
+          metadata?: Json;
+        };
+        Update: {
+          id?: string;
+          organisation_id?: string;
+          card_id?: string;
+          employee_id?: string | null;
+          brand_id?: string | null;
+          location_id?: string | null;
+          session_id?: string;
+          event_type?: string;
+          source?: string;
+          occurred_at?: string;
+          metadata?: Json;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -713,6 +812,20 @@ export type Database = {
         Args: Record<string, never>;
         Returns: string;
       };
+      ingest_card_analytics_event: {
+        Args: {
+          p_card_id: string;
+          p_session_id: string;
+          p_event_type: string;
+          p_source?: string;
+          p_metadata?: Json;
+        };
+        Returns: string;
+      };
+      get_public_campaigns_for_card: {
+        Args: { p_card_id: string };
+        Returns: Database["public"]["Tables"]["campaigns"]["Row"][];
+      };
     };
     Enums: {
       organisation_status: OrganisationStatus;
@@ -740,3 +853,6 @@ export type LocationBrand =
   Database["public"]["Tables"]["location_brands"]["Row"];
 export type EmployeeBrand =
   Database["public"]["Tables"]["employee_brands"]["Row"];
+export type CampaignRow = Database["public"]["Tables"]["campaigns"]["Row"];
+export type CardAnalyticsEvent =
+  Database["public"]["Tables"]["card_analytics_events"]["Row"];

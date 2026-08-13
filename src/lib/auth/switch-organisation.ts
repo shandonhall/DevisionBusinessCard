@@ -68,5 +68,9 @@ export async function switchActiveOrganisationAction(
 
   await writeActiveOrganisationCookie(organisation.id);
   revalidatePath("/dashboard", "layout");
+  revalidatePath("/dashboard/analytics");
+  revalidatePath("/dashboard/campaigns");
+  revalidatePath("/dashboard/cards");
+  revalidatePath("/dashboard/team");
   redirect(redirectPathForOrganisation(formData.get("next"), organisation.id));
 }

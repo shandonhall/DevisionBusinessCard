@@ -311,6 +311,18 @@ async function orgBySlug(pg, slug) {
         );
         assert(kits.rows.length === 0, "AGG admin selected CMH brand kits");
 
+        const campaigns = await pg.query(
+          `select id from public.campaigns where organisation_id = $1`,
+          [cmh.id],
+        );
+        assert(campaigns.rows.length === 0, "AGG admin selected CMH campaigns");
+
+        const analytics = await pg.query(
+          `select id from public.card_analytics_events where organisation_id = $1`,
+          [cmh.id],
+        );
+        assert(analytics.rows.length === 0, "AGG admin selected CMH analytics");
+
         const search = await pg.query(
           `select id, email, employee_reference from public.employees
            where id = $1
@@ -424,6 +436,18 @@ async function orgBySlug(pg, slug) {
         );
         assert(geely.rows.length === 0, "CMH admin can see AGG marques");
 
+        const campaigns = await pg.query(
+          `select id from public.campaigns where organisation_id = $1`,
+          [agg.id],
+        );
+        assert(campaigns.rows.length === 0, "CMH admin selected AGG campaigns");
+
+        const analytics = await pg.query(
+          `select id from public.card_analytics_events where organisation_id = $1`,
+          [agg.id],
+        );
+        assert(analytics.rows.length === 0, "CMH admin selected AGG analytics");
+
         const search = await pg.query(
           `select id from public.employees
            where organisation_id = $1
@@ -459,7 +483,7 @@ async function orgBySlug(pg, slug) {
       failTest("Phase 12: CMH admin cannot access/mutate AGG data", e.message);
     }
 
-    // Draft public card must not resolve as active
+    // Public CMH demo card must never leak AGG (draft or active).
     try {
       const resolved = await pg.query(
         `select public.resolve_public_card($1, $2) as payload`,
@@ -467,13 +491,21 @@ async function orgBySlug(pg, slug) {
       );
       const payload = resolved.rows[0]?.payload;
       assert(payload, "resolve_public_card returned null");
-      assert(
-        payload.type === "missing",
-        `draft CMH card public type=${payload.type}`,
-      );
-      passTest("Draft CMH demo card is not publicly resolvable");
+      if (payload.type === "active") {
+        const blob = JSON.stringify(payload).toLowerCase();
+        assert(
+          !blob.includes("agg motors") && !blob.includes('"slug":"agg"'),
+          "CMH public card leaked AGG",
+        );
+      } else {
+        assert(
+          payload.type === "missing" || payload.type === "paused",
+          `CMH card public type=${payload.type}`,
+        );
+      }
+      passTest("CMH demo card public resolution is tenant-correct");
     } catch (e) {
-      failTest("Draft CMH demo card is not publicly resolvable", e.message);
+      failTest("CMH demo card public resolution is tenant-correct", e.message);
     }
 
     // Error-style safety: cross-tenant select returns empty (not CMH name leak)

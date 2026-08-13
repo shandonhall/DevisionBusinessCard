@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   const organisation = await getPrimaryOrganisation(context);
 
   return (
-    <div className="min-h-screen bg-[var(--brand-background)]">
+    <div className="min-h-screen overflow-x-hidden bg-[var(--brand-background)]">
       <AppHeader
         email={context.email}
         showAdminLink={canAccessPlatformAdmin(context.profile)}

@@ -5,6 +5,7 @@ import { CardUnavailablePage } from "@/components/cards/card-unavailable";
 import { resolvePublicCardRequest } from "@/lib/db/cards";
 import { getServerEnv } from "@/lib/validation/env";
 import { RESERVED_ORG_SLUGS } from "@/lib/validation/auth";
+import { withAttribution } from "@/lib/analytics/source";
 
 type Props = {
   params: Promise<{ organisationSlug: string; cardSlug: string }>;
@@ -53,7 +54,10 @@ export default async function PublicCardQrPage({ params }: Props) {
 
   const model = resolved.view;
   const env = getServerEnv();
-  const absoluteCardUrl = `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${model.card.publicPath}`;
+  const absoluteCardUrl = withAttribution(
+    `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${model.card.publicPath}`,
+    "qr",
+  );
 
   return (
     <>

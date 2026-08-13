@@ -14,6 +14,8 @@ const NAV_LINKS = [
   { href: "/dashboard/my-card", label: "My card" },
   { href: "/dashboard/team", label: "Team" },
   { href: "/dashboard/cards", label: "Cards" },
+  { href: "/dashboard/analytics", label: "Analytics" },
+  { href: "/dashboard/campaigns", label: "Campaigns" },
   { href: "/dashboard/brands", label: "Brands" },
   { href: "/dashboard/locations", label: "Locations" },
   { href: "/dashboard/brand", label: "Brand kit" },

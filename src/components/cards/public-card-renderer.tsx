@@ -3,6 +3,8 @@ import type { PublicCardViewModel } from "@/types/card";
 import { CorporateLayout } from "@/components/cards/corporate-layout";
 import { ExecutiveLayout } from "@/components/cards/executive-layout";
 import { ModernLayout } from "@/components/cards/modern-layout";
+import type { ResolvedCampaign } from "@/lib/campaigns/types";
+import type { PublicAnalyticsContext } from "@/lib/analytics/types";
 
 const InteractiveCardExperience = dynamic(
   () =>
@@ -39,19 +41,29 @@ const DriveCardExperience = dynamic(
 /**
  * Single entry point for public + preview rendering.
  * Experience presets (dimension / drive) take priority over legacy layout ids.
+ * `analyticsContext` must be null on admin preview.
  */
 export function PublicCardRenderer({
   model,
   absoluteCardUrl,
+  campaigns = [],
+  analyticsContext = null,
 }: {
   model: PublicCardViewModel;
   absoluteCardUrl: string;
+  campaigns?: ResolvedCampaign[];
+  analyticsContext?: PublicAnalyticsContext | null;
 }) {
   const preset = model.brandDNA?.experience.preset;
 
   if (preset === "drive") {
     return (
-      <DriveCardExperience model={model} absoluteCardUrl={absoluteCardUrl} />
+      <DriveCardExperience
+        model={model}
+        absoluteCardUrl={absoluteCardUrl}
+        campaigns={campaigns}
+        analyticsContext={analyticsContext}
+      />
     );
   }
 

@@ -70,7 +70,7 @@ export function CardPreviewViewport({ children }: { children: ReactNode }) {
             />
 
             {/* Screen */}
-            <div className="absolute inset-[10px] overflow-hidden rounded-[1.85rem] bg-[var(--brand-surface)] ring-1 ring-black/15">
+            <div className="absolute inset-[10px] overflow-x-hidden overflow-y-auto rounded-[1.85rem] bg-[var(--brand-surface)] ring-1 ring-black/15">
               {/* Home indicator (subtle) */}
               <div
                 aria-hidden
