@@ -19,7 +19,8 @@ export function AnalyticsMetricGrid({ overview }: { overview: AnalyticsOverview 
     { label: "Engagement rate", value: pct(overview.engagementRate) },
     { label: "Average engaged time", value: seconds(overview.averageEngagedTimeMs) },
     { label: "High-intent actions", value: String(overview.highIntentActions) },
-    { label: "Contacts saved", value: String(overview.contactsSaved) },
+    { label: "Save contact taps", value: String(overview.contactsSaved) },
+    { label: "vCard downloaded", value: String(overview.vcardDownloads) },
     { label: "QR-attributed opens", value: String(overview.qrAttributedOpens) },
   ];
 
@@ -113,7 +114,8 @@ export function actionRows(
   counts: Partial<Record<AnalyticsEventType, number>>,
 ): Array<{ label: string; value: number }> {
   return [
-    { label: "Save contact", value: counts.save_contact ?? 0 },
+    { label: "Save contact taps", value: counts.save_contact ?? 0 },
+    { label: "vCard downloaded", value: counts.vcard_download ?? 0 },
     { label: "Call", value: counts.call_click ?? 0 },
     { label: "WhatsApp", value: counts.whatsapp_click ?? 0 },
     { label: "Email", value: counts.email_click ?? 0 },

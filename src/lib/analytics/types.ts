@@ -10,6 +10,7 @@ export const ANALYTICS_EVENT_TYPES = [
   "engagement_time",
   "card_flip",
   "save_contact",
+  "vcard_download",
   "call_click",
   "whatsapp_click",
   "email_click",
@@ -65,6 +66,8 @@ export type AnalyticsEventInput = {
 
 export type AnalyticsTracker = {
   track: (input: AnalyticsEventInput) => void;
+  sessionId: string;
+  source: TrafficSource;
 };
 
 export type PublicAnalyticsContext = {

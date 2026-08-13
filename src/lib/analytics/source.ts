@@ -1,4 +1,7 @@
-import { TRAFFIC_SOURCES, type TrafficSource } from "@/lib/analytics/types";
+import {
+  TRAFFIC_SOURCES,
+  type TrafficSource,
+} from "@/lib/analytics/types";
 
 const SOURCE_SET = new Set<string>(TRAFFIC_SOURCES);
 
@@ -15,6 +18,20 @@ export function parseTrafficSource(
   if (value === "nfc") return "other";
   if (SOURCE_SET.has(value)) return value as TrafficSource;
   return "other";
+}
+
+export function publicVCardPath(
+  organisationSlug: string,
+  cardSlug: string,
+  tracker?: { sessionId: string; source: TrafficSource },
+) {
+  const path = `/api/vcard/${organisationSlug}/${cardSlug}`;
+  if (!tracker) return path;
+  const params = new URLSearchParams({
+    sid: tracker.sessionId,
+    src: tracker.source,
+  });
+  return `${path}?${params.toString()}`;
 }
 
 export function withAttribution(
@@ -40,6 +57,7 @@ export function isValidEventType(value: string): boolean {
     value === "engagement_time" ||
     value === "card_flip" ||
     value === "save_contact" ||
+    value === "vcard_download" ||
     value === "call_click" ||
     value === "whatsapp_click" ||
     value === "email_click" ||

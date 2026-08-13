@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { parseTrafficSource, withAttribution } from "@/lib/analytics/source";
+import {
+  parseTrafficSource,
+  publicVCardPath,
+  withAttribution,
+} from "@/lib/analytics/source";
 import { shouldMarkEngaged } from "@/lib/analytics/engagement";
 import { ENGAGED_VISIBLE_MS } from "@/lib/analytics/types";
 import { summariseEvents } from "@/lib/analytics/summarise";
@@ -24,6 +28,18 @@ describe("traffic source allow-list", () => {
   it("stamps attribution without spoiling the path", () => {
     expect(withAttribution("https://example.com/agg/jane", "qr")).toBe(
       "https://example.com/agg/jane?src=qr",
+    );
+  });
+
+  it("attaches session to the vCard download URL only when tracking", () => {
+    expect(publicVCardPath("agg", "jane")).toBe("/api/vcard/agg/jane");
+    expect(
+      publicVCardPath("agg", "jane", {
+        sessionId: "11111111-1111-4111-8111-111111111111",
+        source: "qr",
+      }),
+    ).toBe(
+      "/api/vcard/agg/jane?sid=11111111-1111-4111-8111-111111111111&src=qr",
     );
   });
 });
@@ -106,7 +122,37 @@ describe("dashboard summary language", () => {
     expect(overview.cardViews).toBe(1);
     expect(overview.sessions).toBe(1);
     expect(overview.contactsSaved).toBe(1);
+    expect(overview.vcardDownloads).toBe(0);
     expect(overview.highIntentActions).toBe(1);
     expect(overview.qrAttributedOpens).toBe(1);
+  });
+
+  it("counts vCard file requests separately from save taps", () => {
+    const overview = summariseEvents([
+      {
+        card_id: "c1",
+        employee_id: "e1",
+        brand_id: null,
+        location_id: null,
+        session_id: "s1",
+        event_type: "save_contact",
+        source: "direct",
+        occurred_at: "2026-08-13T10:00:00Z",
+        metadata: {},
+      },
+      {
+        card_id: "c1",
+        employee_id: "e1",
+        brand_id: null,
+        location_id: null,
+        session_id: "s1",
+        event_type: "vcard_download",
+        source: "direct",
+        occurred_at: "2026-08-13T10:00:01Z",
+        metadata: { via: "vcard_endpoint" },
+      },
+    ]);
+    expect(overview.contactsSaved).toBe(1);
+    expect(overview.vcardDownloads).toBe(1);
   });
 });

@@ -185,5 +185,5 @@ export function createPublicAnalyticsTracker(context: PublicAnalyticsContext) {
     };
   }
 
-  return { track, start };
+  return { track, start, sessionId, source: context.source };
 }

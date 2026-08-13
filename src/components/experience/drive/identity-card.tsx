@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import type { BrandDNA } from "@/lib/experience/types";
 import type { DriveMarqueId } from "@/lib/experience/drive-marque";
 import {
@@ -49,6 +49,7 @@ export function DriveIdentityCard({
   onFlip?: (next: "front" | "back") => void;
 }) {
   const [flipped, setFlipped] = useState(false);
+  const pointerRef = useRef({ x: 0, y: 0, moved: false });
   const labelId = useId();
   const hasPhoto = Boolean(model.employee.profilePhotoUrl);
   const marqueConfig = getDriveMarqueConfig(marque);
@@ -76,6 +77,29 @@ export function DriveIdentityCard({
     });
   }
 
+  function onCardPointerDown(event: React.PointerEvent<HTMLElement>) {
+    pointerRef.current = { x: event.clientX, y: event.clientY, moved: false };
+  }
+
+  function onCardPointerMove(event: React.PointerEvent<HTMLElement>) {
+    if (interactive) handlers.onPointerMove(event);
+    const dx = event.clientX - pointerRef.current.x;
+    const dy = event.clientY - pointerRef.current.y;
+    if (Math.hypot(dx, dy) > 10) pointerRef.current.moved = true;
+  }
+
+  function onCardClick() {
+    if (pointerRef.current.moved) return;
+    toggleFlip();
+  }
+
+  function onCardKeyDown(event: React.KeyboardEvent<HTMLElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleFlip();
+    }
+  }
+
   return (
     <div className="drive-identity-stage relative mx-auto w-full">
       <div className="drive-card-shadow drive-card-shadow--ambient" aria-hidden />
@@ -83,8 +107,19 @@ export function DriveIdentityCard({
       <div className="drive-card-shadow drive-card-shadow--bounce" aria-hidden />
 
       <div
-        className="drive-card-scene relative touch-none"
-        {...(interactive ? handlers : {})}
+        className="drive-card-scene drive-card-scene--flip relative touch-none"
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? "Show front of card" : "Turn card over"}
+        onPointerDown={onCardPointerDown}
+        onPointerMove={onCardPointerMove}
+        onPointerLeave={interactive ? handlers.onPointerLeave : undefined}
+        onTouchStart={interactive ? handlers.onTouchStart : undefined}
+        onTouchMove={interactive ? handlers.onTouchMove : undefined}
+        onTouchEnd={interactive ? handlers.onTouchEnd : undefined}
+        onClick={onCardClick}
+        onKeyDown={onCardKeyDown}
       >
         <div
           className={`drive-card-present ${reducedMotion ? "drive-card-present--static" : ""}`}
@@ -234,18 +269,6 @@ export function DriveIdentityCard({
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="drive-flip-row">
-        <button
-          type="button"
-          className="drive-flip-affordance"
-          aria-pressed={flipped}
-          aria-label={flipped ? "Show front of card" : "Turn card over"}
-          onClick={toggleFlip}
-        >
-          {flipped ? "Front" : "Turn over"}
-        </button>
       </div>
     </div>
   );

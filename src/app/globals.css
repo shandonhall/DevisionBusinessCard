@@ -1589,6 +1589,23 @@ a {
   z-index: 1;
 }
 
+.drive-card-scene--flip {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: inherit;
+  color: inherit;
+}
+
+.drive-card-scene--flip:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--drive-champagne) 70%, transparent);
+  outline-offset: 6px;
+  border-radius: 1.35rem;
+}
+
 .drive-card-present {
   animation: drive-card-settle 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
 }

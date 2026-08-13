@@ -16,7 +16,7 @@ import {
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
 import type { AnalyticsTracker } from "@/lib/analytics/types";
-import { withAttribution } from "@/lib/analytics/source";
+import { publicVCardPath, withAttribution } from "@/lib/analytics/source";
 
 function whatsappHref(value: string) {
   return `https://wa.me/${value.replace(/\D/g, "")}`;
@@ -40,7 +40,11 @@ export function DriveContactDock({
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const titleId = useId();
-  const vcardUrl = `/api/vcard/${model.organisation.slug}/${model.card.slug}`;
+  const vcardUrl = publicVCardPath(
+    model.organisation.slug,
+    model.card.slug,
+    tracker,
+  );
   const qrPageUrl = `${model.card.publicPath}/qr`;
   const isPublic = model.card.publicStatus === "active";
   const website =

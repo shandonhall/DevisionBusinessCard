@@ -12,6 +12,7 @@ export type AnalyticsOverview = {
   averageEngagedTimeMs: number;
   highIntentActions: number;
   contactsSaved: number;
+  vcardDownloads: number;
   qrAttributedOpens: number;
   flipSessions: number;
   flipRate: number;
@@ -38,6 +39,7 @@ function emptyOverview(): AnalyticsOverview {
     averageEngagedTimeMs: 0,
     highIntentActions: 0,
     contactsSaved: 0,
+    vcardDownloads: 0,
     qrAttributedOpens: 0,
     flipSessions: 0,
     flipRate: 0,
@@ -76,6 +78,8 @@ export function summariseEvents(events: EventRow[]): AnalyticsOverview {
     averageEngagedTimeMs: engagedCount ? timeMs / engagedCount : 0,
     highIntentActions: highIntent,
     contactsSaved: events.filter((event) => event.event_type === "save_contact")
+      .length,
+    vcardDownloads: events.filter((event) => event.event_type === "vcard_download")
       .length,
     qrAttributedOpens: new Set(
       events

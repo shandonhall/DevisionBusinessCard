@@ -9,16 +9,21 @@ import { usePointerTilt } from "@/components/experience/hooks/use-pointer-tilt";
 import { DimensionBackground } from "@/components/experience/dimension/background";
 import { DimensionalIdentityCard } from "@/components/experience/dimension/identity-card";
 import { DimensionContactInterface } from "@/components/experience/dimension/contact-interface";
+import { usePublicAnalytics } from "@/components/experience/hooks/use-public-analytics";
+import type { PublicAnalyticsContext } from "@/lib/analytics/types";
 
 export function InteractiveCardExperience({
   model,
   absoluteCardUrl,
+  analyticsContext = null,
 }: {
   model: PublicCardViewModel;
   absoluteCardUrl: string;
+  analyticsContext?: PublicAnalyticsContext | null;
 }) {
   const dna = model.brandDNA;
   const quality = useExperienceQuality(dna.experience.allowAdvancedEffects);
+  const tracker = usePublicAnalytics(analyticsContext);
   const reducedMotion = quality === "essential";
   const interactive = !reducedMotion && dna.experience.tiltStrength > 0;
   const shellRef = useRef<HTMLDivElement>(null);
@@ -70,6 +75,15 @@ export function InteractiveCardExperience({
               interactive={interactive}
               reducedMotion={reducedMotion}
               absoluteCardUrl={absoluteCardUrl}
+              onFlip={(to) => {
+                tracker?.track({
+                  eventType: "card_flip",
+                  metadata: {
+                    from: to === "back" ? "front" : "back",
+                    to,
+                  },
+                });
+              }}
             />
           </div>
 
@@ -77,6 +91,7 @@ export function InteractiveCardExperience({
             <DimensionContactInterface
               model={model}
               absoluteCardUrl={absoluteCardUrl}
+              tracker={tracker}
             />
           </div>
 

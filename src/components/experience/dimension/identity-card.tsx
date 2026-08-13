@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
 import type { BrandDNA } from "@/lib/experience/types";
 import type { PublicCardViewModel } from "@/types/card";
+import { withAttribution } from "@/lib/analytics/source";
 
 function monogram(model: PublicCardViewModel) {
   return (
@@ -24,6 +25,7 @@ export function DimensionalIdentityCard({
   interactive,
   reducedMotion,
   absoluteCardUrl,
+  onFlip,
 }: {
   model: PublicCardViewModel;
   dna: BrandDNA;
@@ -37,6 +39,7 @@ export function DimensionalIdentityCard({
   interactive: boolean;
   reducedMotion: boolean;
   absoluteCardUrl: string;
+  onFlip?: (next: "front" | "back") => void;
 }) {
   const [flipped, setFlipped] = useState(false);
   const [hintSpent, setHintSpent] = useState(false);
@@ -59,7 +62,11 @@ export function DimensionalIdentityCard({
         : "1.1rem";
 
   function toggleFlip() {
-    setFlipped((v) => !v);
+    setFlipped((current) => {
+      const next = !current;
+      onFlip?.(next ? "back" : "front");
+      return next;
+    });
     setHintSpent(true);
   }
 
@@ -186,7 +193,7 @@ export function DimensionalIdentityCard({
                   <p className="dim-back-label">Scan to save</p>
                   <div className="dim-back-qr-plate">
                     <QrCodeBlock
-                      value={absoluteCardUrl}
+                      value={withAttribution(absoluteCardUrl, "qr")}
                       size={118}
                       title={`QR for ${model.employee.displayName}`}
                     />

@@ -72,6 +72,7 @@ export function PublicCardRenderer({
       <InteractiveCardExperience
         model={model}
         absoluteCardUrl={absoluteCardUrl}
+        analyticsContext={analyticsContext}
       />
     );
   }

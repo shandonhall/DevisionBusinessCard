@@ -16,6 +16,8 @@ import {
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
 import { SocialLinks } from "@/components/card-sections/primitives";
+import type { AnalyticsTracker } from "@/lib/analytics/types";
+import { publicVCardPath, withAttribution } from "@/lib/analytics/source";
 
 function whatsappHref(value: string) {
   return `https://wa.me/${value.replace(/\D/g, "")}`;
@@ -28,16 +30,24 @@ function whatsappHref(value: string) {
 export function DimensionContactInterface({
   model,
   absoluteCardUrl,
+  tracker,
 }: {
   model: PublicCardViewModel;
   absoluteCardUrl: string;
+  tracker?: AnalyticsTracker;
 }) {
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const titleId = useId();
-  const vcardUrl = `/api/vcard/${model.organisation.slug}/${model.card.slug}`;
+  const vcardUrl = publicVCardPath(
+    model.organisation.slug,
+    model.card.slug,
+    tracker,
+  );
   const qrPageUrl = `${model.card.publicPath}/qr`;
   const isPublic = model.card.publicStatus === "active";
+  const shareUrl = withAttribution(absoluteCardUrl, "shared");
+  const qrUrl = withAttribution(absoluteCardUrl, "qr");
 
   const quick = [
     model.employee.mobile
@@ -84,12 +94,13 @@ export function DimensionContactInterface({
   }, [qrOpen]);
 
   async function handleShare() {
+    tracker?.track({ eventType: "share_click" });
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
           title: model.employee.displayName,
           text: `${model.employee.displayName} · ${model.brand?.name || model.organisation.name}`,
-          url: absoluteCardUrl,
+          url: shareUrl,
         });
         return;
       } catch {
@@ -101,7 +112,8 @@ export function DimensionContactInterface({
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(absoluteCardUrl);
+      await navigator.clipboard.writeText(shareUrl);
+      tracker?.track({ eventType: "copy_link" });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -112,7 +124,11 @@ export function DimensionContactInterface({
   return (
     <div className="dim-contact mx-auto w-full max-w-[40rem] space-y-7 sm:space-y-9">
       <div className="dim-dock-stack space-y-3 sm:space-y-3.5">
-        <a href={vcardUrl} className="dim-save-cta group">
+        <a
+          href={vcardUrl}
+          className="dim-save-cta group"
+          onClick={() => tracker?.track({ eventType: "save_contact" })}
+        >
           <span className="dim-save-fill" aria-hidden />
           <span className="dim-save-edge" aria-hidden />
           <span className="dim-save-sheen" aria-hidden />
@@ -141,6 +157,20 @@ export function DimensionContactInterface({
                       ? "noopener noreferrer"
                       : undefined
                   }
+                  onClick={() => {
+                    if (action.key === "call") {
+                      tracker?.track({ eventType: "call_click" });
+                    }
+                    if (action.key === "whatsapp") {
+                      tracker?.track({ eventType: "whatsapp_click" });
+                    }
+                    if (action.key === "email") {
+                      tracker?.track({ eventType: "email_click" });
+                    }
+                    if (action.key === "website") {
+                      tracker?.track({ eventType: "website_click" });
+                    }
+                  }}
                 >
                   <action.Icon size={15} strokeWidth={1.75} aria-hidden />
                   <span>{action.label}</span>
@@ -230,7 +260,7 @@ export function DimensionContactInterface({
             </div>
             <div className="mx-auto flex w-fit rounded-xl bg-white p-4">
               <QrCodeBlock
-                value={absoluteCardUrl}
+                value={qrUrl}
                 size={220}
                 title={`QR code for ${model.employee.displayName}`}
               />
