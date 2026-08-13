@@ -1622,6 +1622,7 @@ a {
   position: relative;
   width: 100%;
   max-width: 100%;
+  transform-origin: center center;
   transform-style: preserve-3d;
   transition: transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
   transform: rotateY(0deg);
@@ -1639,7 +1640,6 @@ a {
 .drive-card--back {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* Flatten each face so the reverse side cannot paint over the front. */
   transform-style: flat;
 }
 
@@ -1653,17 +1653,25 @@ a {
   position: absolute;
   inset: 0;
   z-index: 1;
+  display: flex;
+  overflow: hidden;
   transform: rotateY(180deg) translateZ(1px);
 }
 
-.drive-card-flipper:not(.is-flipped) .drive-card--back,
-.drive-card-flipper.is-flipped .drive-card--front {
+.drive-card--back .drive-card__body {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
+
+.drive-card-flipper:not(.is-flipped) .drive-card--back {
   pointer-events: none;
   visibility: hidden;
 }
 
-.drive-card-flipper.is-flipped .drive-card--back {
-  visibility: visible;
+.drive-card-flipper.is-flipped .drive-card--front {
+  pointer-events: none;
 }
 
 .drive-flip-row {
@@ -1694,10 +1702,22 @@ a {
 .drive-card-back__inner {
   position: relative;
   z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 0.7rem 0.9rem;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drive-card-back__copy {
   display: flex;
-  min-height: 100%;
+  min-width: 0;
+  min-height: 0;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.28rem;
+  overflow: hidden;
 }
 
 .drive-card-back__kicker {
@@ -1725,7 +1745,7 @@ a {
 
 .drive-card-back__bio {
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1759,9 +1779,8 @@ a {
 }
 
 .drive-card-back__qr {
-  margin-top: auto;
-  align-self: flex-end;
-  padding: 0.35rem;
+  align-self: center;
+  padding: 0.3rem;
   border-radius: 0.55rem;
   background: white;
 }
@@ -1774,7 +1793,7 @@ a {
   transform-style: preserve-3d;
 }
 
-/* Studio: one shrink-wrapped cluster, always centered. No 1fr / subgrid. */
+/* Studio: card stacked above actions; flip must not change page position. */
 .drive-stage {
   display: flex;
   flex-direction: column;
@@ -1786,7 +1805,7 @@ a {
   display: flex;
   flex: 1 0 auto;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   max-width: 100%;
 }
@@ -1794,38 +1813,36 @@ a {
 .drive-studio {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  width: fit-content;
-  max-width: 100%;
+  align-items: stretch;
+  gap: 1.15rem;
+  width: min(100%, 32rem);
 }
 
 .drive-studio__cluster {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.25rem 1.5rem;
-  width: fit-content;
-  max-width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.15rem;
+  width: 100%;
+}
+
+.drive-studio__hero,
+.drive-studio__console,
+.drive-studio__footer {
+  width: 100%;
+  min-width: 0;
 }
 
 .drive-studio__hero {
-  flex: 0 1 auto;
   order: 1;
-  width: min(100%, 38rem);
 }
 
 .drive-studio__console {
-  flex: 0 1 auto;
   order: 2;
-  width: min(100%, 22rem);
 }
 
 .drive-studio__footer {
   order: 3;
-  width: min(100%, 38rem);
 }
 
 .drive-studio__aside {
