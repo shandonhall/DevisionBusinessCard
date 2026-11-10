@@ -7,7 +7,25 @@ import {
   buildApplePassContent,
   hexToRgb,
   toPassRgb,
+  type ApplePassField,
 } from "@/lib/wallet/apple-pass-content";
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function toPassKitField({ link, ...field }: ApplePassField) {
+  if (!link) return field;
+  return {
+    ...field,
+    attributedValue: `<a href="${escapeHtml(link.href)}">${escapeHtml(link.text)}</a>`,
+  };
+}
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const SCALES = [1, 2, 3] as const;
@@ -155,11 +173,11 @@ export async function createApplePass(
   );
 
   const generic = new PassType("generic");
-  generic.headerFields.push(...content.headerFields);
-  generic.primaryFields.push(...content.primaryFields);
-  generic.secondaryFields.push(...content.secondaryFields);
-  generic.auxiliaryFields.push(...content.auxiliaryFields);
-  generic.backFields.push(...content.backFields);
+  generic.headerFields.push(...content.headerFields.map(toPassKitField));
+  generic.primaryFields.push(...content.primaryFields.map(toPassKitField));
+  generic.secondaryFields.push(...content.secondaryFields.map(toPassKitField));
+  generic.auxiliaryFields.push(...content.auxiliaryFields.map(toPassKitField));
+  generic.backFields.push(...content.backFields.map(toPassKitField));
   pass.types.push(generic);
 
   pass.setBarcodes({

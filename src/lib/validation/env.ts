@@ -59,6 +59,10 @@ const serverEnvSchema = z.object({
     emptyToUndefined,
     z.string().min(1).optional(),
   ),
+  WALLETWALLET_API_KEY: z.preprocess(
+    emptyToUndefined,
+    z.string().min(1).optional(),
+  ),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -84,6 +88,7 @@ export function getServerEnv(): ServerEnv {
     APPLE_WALLET_SIGNER_KEY_PASSPHRASE:
       process.env.APPLE_WALLET_SIGNER_KEY_PASSPHRASE,
     APPLE_WALLET_WWDR_CERT: process.env.APPLE_WALLET_WWDR_CERT,
+    WALLETWALLET_API_KEY: process.env.WALLETWALLET_API_KEY,
   });
 
   if (!parsed.success) {
@@ -150,6 +155,14 @@ export function getAppleWalletConfig(
 
 export function hasAppleWalletConfig(env: ServerEnv = getServerEnv()) {
   return getAppleWalletConfig(env) !== null;
+}
+
+/**
+ * Passes can be signed with our own Apple certificate, or by WalletWallet
+ * (their certificate) until we have one.
+ */
+export function isAppleWalletAvailable(env: ServerEnv = getServerEnv()) {
+  return hasAppleWalletConfig(env) || Boolean(env.WALLETWALLET_API_KEY);
 }
 
 /** Test helper - clears memoised env between cases. */

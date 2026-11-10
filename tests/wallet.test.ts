@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import forge from "node-forge";
 import {
   parsePublicCardPayload,
@@ -11,7 +11,18 @@ import {
 } from "@/lib/wallet/apple-pass-content";
 import { createApplePass } from "@/lib/wallet/apple-pass";
 import { platformDefaultTokens } from "@/lib/branding/tokens";
-import { decodePemEnv, getAppleWalletConfig } from "@/lib/validation/env";
+import {
+  decodePemEnv,
+  getAppleWalletConfig,
+  isAppleWalletAvailable,
+  type ServerEnv,
+} from "@/lib/validation/env";
+import {
+  buildWalletWalletBody,
+  createWalletWalletPass,
+  nearestColorPreset,
+  WalletWalletError,
+} from "@/lib/wallet/walletwallet";
 import { publicAppleWalletPassPath } from "@/lib/analytics/source";
 import type { Json } from "@/types/database";
 
@@ -90,12 +101,10 @@ describe("Apple Wallet pass content", () => {
     );
 
     const back = Object.fromEntries(content.backFields.map((f) => [f.key, f]));
-    expect(back["back-whatsapp"]?.attributedValue).toContain(
-      'href="https://wa.me/27821234567"',
-    );
+    expect(back["back-whatsapp"]?.link?.href).toBe("https://wa.me/27821234567");
     expect(back["back-website"]?.value).toBe("https://acme.example");
     expect(back["back-location"]?.value).toBe("1 Main Road, Ballito");
-    expect(back["back-card"]?.attributedValue).toContain("Open the full card");
+    expect(back["back-card"]?.link?.text).toBe("Open the full card");
     expect(back["back-platform"]?.value).toBe("DeVision Media");
   });
 
@@ -155,6 +164,93 @@ describe("Apple Wallet config", () => {
   });
 });
 
+const baseEnv: ServerEnv = {
+  NODE_ENV: "test",
+  NEXT_PUBLIC_PLATFORM_NAME: "DeVision Media",
+  NEXT_PUBLIC_PLATFORM_BASE_DOMAIN: "localhost:3000",
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+};
+
+describe("WalletWallet fallback", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("turns the button on with only a WalletWallet key", () => {
+    expect(isAppleWalletAvailable(baseEnv)).toBe(false);
+    expect(
+      isAppleWalletAvailable({ ...baseEnv, WALLETWALLET_API_KEY: "ww_live_x" }),
+    ).toBe(true);
+  });
+
+  it("maps pass content onto WalletWallet fields with links as plain URLs", () => {
+    const model = sampleModel({ withLocation: true });
+    const content = buildApplePassContent(model, {
+      cardUrl: "https://cards.example/acme/jane-doe?src=wallet",
+      hasLogoImage: false,
+      platformName: "DeVision Media",
+    });
+    const body = buildWalletWalletBody(content, model.tokens);
+
+    expect(body.logoText).toBe("Acme Group");
+    expect(body.organizationName).toBe("Acme Group");
+    expect(body.primaryFields).toEqual([{ value: "Jane Doe" }]);
+    expect(body.headerFields).toEqual([{ label: "Location", value: "Acme Ballito" }]);
+    expect(body.barcodeValue).toBe("https://cards.example/acme/jane-doe?src=wallet");
+    expect(body.barcodeFormat).toBe("QR");
+    expect(body.sharingProhibited).toBe(false);
+    expect(body.backFields).toContainEqual({
+      label: "WhatsApp",
+      value: "https://wa.me/27821234567",
+    });
+    for (const field of [...body.primaryFields, ...body.backFields]) {
+      expect(field.value.length).toBeLessThanOrEqual(256);
+    }
+  });
+
+  it("picks a preset that matches the brand surface or colour", () => {
+    expect(
+      nearestColorPreset({ ...platformDefaultTokens, surface: "#0C121A" }),
+    ).toBe("dark");
+    expect(
+      nearestColorPreset({ ...platformDefaultTokens, primary: "#003478" }),
+    ).toBe("blue");
+    expect(
+      nearestColorPreset({ ...platformDefaultTokens, primary: "#0F766E" }),
+    ).toBe("green");
+    expect(
+      nearestColorPreset({ ...platformDefaultTokens, primary: "#AA0000" }),
+    ).toBe("red");
+  });
+
+  it("sends the key and returns the signed pass bytes", async () => {
+    const fetchMock = vi.fn(async () =>
+      new Response(new Uint8Array([0x50, 0x4b, 1, 2]), { status: 200 }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const buffer = await createWalletWalletPass(
+      { logoText: "Acme" } as never,
+      "ww_live_test",
+    );
+    expect(buffer.subarray(0, 2).toString()).toBe("PK");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://api.walletwallet.dev/api/pkpass");
+    expect((init.headers as Record<string, string>).Authorization).toBe(
+      "Bearer ww_live_test",
+    );
+  });
+
+  it("reports the monthly limit as a WalletWallet error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response('{"error":"limit"}', { status: 429 })),
+    );
+    await expect(
+      createWalletWalletPass({ logoText: "Acme" } as never, "ww_live_test"),
+    ).rejects.toMatchObject({ status: 429 } satisfies Partial<WalletWalletError>);
+  });
+});
+
 function selfSignedPem() {
   const keys = forge.pki.rsa.generateKeyPair(1024);
   const cert = forge.pki.createCertificate();
@@ -196,5 +292,6 @@ describe("Apple Wallet pass file", () => {
     expect(text).toContain('"generic"');
     expect(text).toContain("PKBarcodeFormatQR");
     expect(text).toContain("src=wallet");
+    expect(text).toContain("Open the full card");
   }, 30_000);
 });

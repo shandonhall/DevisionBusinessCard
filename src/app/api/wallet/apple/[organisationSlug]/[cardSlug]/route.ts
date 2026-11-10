@@ -3,7 +3,14 @@ import { resolvePublicCardRequest } from "@/lib/db/cards";
 import { getAppleWalletConfig, getServerEnv } from "@/lib/validation/env";
 import { RESERVED_ORG_SLUGS } from "@/lib/validation/auth";
 import { recordDownloadEvent } from "@/lib/analytics/server";
+import { withAttribution } from "@/lib/analytics/source";
 import { createApplePass } from "@/lib/wallet/apple-pass";
+import { buildApplePassContent } from "@/lib/wallet/apple-pass-content";
+import {
+  buildWalletWalletBody,
+  createWalletWalletPass,
+  WalletWalletError,
+} from "@/lib/wallet/walletwallet";
 
 type Params = {
   params: Promise<{ organisationSlug: string; cardSlug: string }>;
@@ -16,8 +23,10 @@ export async function GET(req: Request, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const config = getAppleWalletConfig();
-  if (!config) {
+  const env = getServerEnv();
+  const config = getAppleWalletConfig(env);
+  const walletWalletKey = env.WALLETWALLET_API_KEY;
+  if (!config && !walletWalletKey) {
     return NextResponse.json(
       { error: "Apple Wallet is not configured" },
       { status: 404 },
@@ -37,28 +46,48 @@ export async function GET(req: Request, { params }: Params) {
   }
 
   const model = resolved.view;
-  const env = getServerEnv();
   const appUrl = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  const absoluteCardUrl = `${appUrl}${model.card.publicPath}`;
   const requestUrl = new URL(req.url);
 
   let pass: Buffer;
+  let via: string;
   try {
-    pass = await createApplePass(model, {
-      config,
-      absoluteCardUrl: `${appUrl}${model.card.publicPath}`,
-      assetOrigin: requestUrl.origin,
-      platformName: env.NEXT_PUBLIC_PLATFORM_NAME,
-    });
+    if (config) {
+      via = "apple_wallet_endpoint";
+      pass = await createApplePass(model, {
+        config,
+        absoluteCardUrl,
+        assetOrigin: requestUrl.origin,
+        platformName: env.NEXT_PUBLIC_PLATFORM_NAME,
+      });
+    } else {
+      via = "walletwallet";
+      const content = buildApplePassContent(model, {
+        cardUrl: withAttribution(absoluteCardUrl, "wallet"),
+        hasLogoImage: false,
+        platformName: env.NEXT_PUBLIC_PLATFORM_NAME,
+      });
+      pass = await createWalletWalletPass(
+        buildWalletWalletBody(content, model.tokens),
+        walletWalletKey!,
+      );
+    }
   } catch (error) {
     console.error("Apple Wallet pass generation failed", error);
+    const quotaHit = error instanceof WalletWalletError && error.status === 429;
     return NextResponse.json(
-      { error: "Could not create the Wallet pass" },
-      { status: 500 },
+      {
+        error: quotaHit
+          ? "Wallet passes are temporarily unavailable. Please try again later."
+          : "Could not create the Wallet pass",
+      },
+      { status: quotaHit ? 503 : 500 },
     );
   }
 
   await recordDownloadEvent(requestUrl, model.card.id, "wallet_pass_download", {
-    via: "apple_wallet_endpoint",
+    via,
   });
 
   return new NextResponse(new Uint8Array(pass), {

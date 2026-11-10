@@ -13,7 +13,7 @@ import {
   getCardPreviewForAdmin,
   listDriveDemoPreviewSiblings,
 } from "@/lib/db/cards";
-import { getServerEnv, hasAppleWalletConfig } from "@/lib/validation/env";
+import { getServerEnv, isAppleWalletAvailable } from "@/lib/validation/env";
 
 export const dynamic = "force-dynamic";
 
@@ -81,7 +81,7 @@ export default async function CardPreviewPage({ params }: Props) {
             <PublicCardRenderer
               model={{
                 ...model,
-                card: { ...model.card, appleWalletEnabled: hasAppleWalletConfig(env) },
+                card: { ...model.card, appleWalletEnabled: isAppleWalletAvailable(env) },
               }}
               absoluteCardUrl={absoluteCardUrl}
             />

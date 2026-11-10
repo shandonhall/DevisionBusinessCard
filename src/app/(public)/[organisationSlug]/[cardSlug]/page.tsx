@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { PublicCardRenderer } from "@/components/cards/public-card-renderer";
 import { CardUnavailablePage } from "@/components/cards/card-unavailable";
 import { resolvePublicCardRequest } from "@/lib/db/cards";
-import { getServerEnv, hasAppleWalletConfig } from "@/lib/validation/env";
+import { getServerEnv, isAppleWalletAvailable } from "@/lib/validation/env";
 import { RESERVED_ORG_SLUGS } from "@/lib/validation/auth";
 import { parseTrafficSource } from "@/lib/analytics/source";
 import { listResolvedPublicCampaigns } from "@/lib/db/campaigns";
@@ -74,7 +74,7 @@ export default async function PublicCardPage({ params, searchParams }: Props) {
 
   const model = {
     ...resolved.view,
-    card: { ...resolved.view.card, appleWalletEnabled: hasAppleWalletConfig() },
+    card: { ...resolved.view.card, appleWalletEnabled: isAppleWalletAvailable() },
   };
   const source = parseTrafficSource(src);
   let campaigns: Awaited<ReturnType<typeof listResolvedPublicCampaigns>> = [];

@@ -5,7 +5,8 @@ export type ApplePassField = {
   key: string;
   label?: string;
   value: string;
-  attributedValue?: string;
+  /** Rendered as a tappable link on the back of the pass. */
+  link?: { href: string; text: string };
 };
 
 export type ApplePassColours = {
@@ -77,19 +78,6 @@ export function resolvePassColours(tokens: DesignTokens): ApplePassColours {
   return { background, foreground, label };
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function link(href: string, text: string) {
-  return `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>`;
-}
-
 function absoluteHttpUrl(value: string) {
   const trimmed = value.trim();
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
@@ -144,7 +132,7 @@ export function buildApplePassContent(
       key: "back-whatsapp",
       label: "WhatsApp",
       value: employee.whatsapp,
-      attributedValue: link(href, "Message on WhatsApp"),
+      link: { href, text: "Message on WhatsApp" },
     });
   }
   if (employee.email) {
@@ -156,7 +144,7 @@ export function buildApplePassContent(
       key: "back-website",
       label: "Website",
       value: href,
-      attributedValue: link(href, hostLabel(href)),
+      link: { href, text: hostLabel(href) },
     });
   }
   if (employee.linkedinUrl) {
@@ -165,7 +153,7 @@ export function buildApplePassContent(
       key: "back-linkedin",
       label: "LinkedIn",
       value: href,
-      attributedValue: link(href, "View LinkedIn profile"),
+      link: { href, text: "View LinkedIn profile" },
     });
   }
   if (location) {
@@ -186,7 +174,7 @@ export function buildApplePassContent(
     key: "back-card",
     label: "Digital business card",
     value: options.cardUrl,
-    attributedValue: link(options.cardUrl, "Open the full card"),
+    link: { href: options.cardUrl, text: "Open the full card" },
   });
   if (employee.bio) {
     backFields.push({ key: "back-about", label: "About", value: employee.bio });
