@@ -104,6 +104,7 @@ export function countBySource(
     direct: 0,
     shared: 0,
     campaign: 0,
+    wallet: 0,
     other: 0,
   };
   const seen = new Set<string>();

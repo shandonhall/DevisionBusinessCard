@@ -44,6 +44,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Apple Wallet signing key and certificates
+/.wallet-cert/
+*.cer
+*.p12
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

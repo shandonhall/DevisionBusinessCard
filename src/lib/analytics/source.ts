@@ -20,18 +20,34 @@ export function parseTrafficSource(
   return "other";
 }
 
-export function publicVCardPath(
-  organisationSlug: string,
-  cardSlug: string,
-  tracker?: { sessionId: string; source: TrafficSource },
-) {
-  const path = `/api/vcard/${organisationSlug}/${cardSlug}`;
+type SessionAttribution = { sessionId: string; source: TrafficSource };
+
+function withSession(path: string, tracker?: SessionAttribution) {
   if (!tracker) return path;
   const params = new URLSearchParams({
     sid: tracker.sessionId,
     src: tracker.source,
   });
   return `${path}?${params.toString()}`;
+}
+
+export function publicVCardPath(
+  organisationSlug: string,
+  cardSlug: string,
+  tracker?: SessionAttribution,
+) {
+  return withSession(`/api/vcard/${organisationSlug}/${cardSlug}`, tracker);
+}
+
+export function publicAppleWalletPassPath(
+  organisationSlug: string,
+  cardSlug: string,
+  tracker?: SessionAttribution,
+) {
+  return withSession(
+    `/api/wallet/apple/${organisationSlug}/${cardSlug}`,
+    tracker,
+  );
 }
 
 export function withAttribution(
@@ -58,6 +74,7 @@ export function isValidEventType(value: string): boolean {
     value === "card_flip" ||
     value === "save_contact" ||
     value === "vcard_download" ||
+    value === "wallet_pass_download" ||
     value === "call_click" ||
     value === "whatsapp_click" ||
     value === "email_click" ||

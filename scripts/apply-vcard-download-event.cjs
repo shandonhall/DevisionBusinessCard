@@ -1,5 +1,6 @@
 /**
- * Add vcard_download to the live analytics event enum.
+ * Apply an analytics enum migration to the live database.
+ * Usage: node scripts/apply-vcard-download-event.cjs [migration file name]
  */
 const { Client } = require("pg");
 const fs = require("fs");
@@ -64,21 +65,24 @@ async function connect(pass) {
 
 (async () => {
   const pass = readEnv("DATABASE_PASSWORD");
-  const sql = fs.readFileSync(
-    path.join("supabase", "migrations", "20260813120000_vcard_download_event.sql"),
-    "utf8",
-  );
+  const file = process.argv[2] ?? "20260813120000_vcard_download_event.sql";
+  const sql = fs.readFileSync(path.join("supabase", "migrations", file), "utf8");
   const client = await connect(pass);
   try {
     await client.query(sql);
-    const values = await client.query(`
-      select enumlabel
-      from pg_enum
-      join pg_type on pg_enum.enumtypid = pg_type.oid
-      where pg_type.typname = 'card_analytics_event_type'
-      order by enumsortorder
-    `);
-    console.log("OK", values.rows.map((r) => r.enumlabel).join(", "));
+    for (const typeName of ["card_analytics_event_type", "card_analytics_source"]) {
+      const values = await client.query(
+        `
+        select enumlabel
+        from pg_enum
+        join pg_type on pg_enum.enumtypid = pg_type.oid
+        where pg_type.typname = $1
+        order by enumsortorder
+      `,
+        [typeName],
+      );
+      console.log(typeName, values.rows.map((r) => r.enumlabel).join(", "));
+    }
   } finally {
     await client.end();
   }

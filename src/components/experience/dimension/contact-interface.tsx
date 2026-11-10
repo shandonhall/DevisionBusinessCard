@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
+import { AddToAppleWallet } from "@/components/cards/add-to-apple-wallet";
 import { SocialLinks } from "@/components/card-sections/primitives";
 import type { AnalyticsTracker } from "@/lib/analytics/types";
 import { publicVCardPath, withAttribution } from "@/lib/analytics/source";
@@ -135,6 +136,12 @@ export function DimensionContactInterface({
           <Download size={15} className="relative opacity-85" aria-hidden />
           <span className="relative">Save contact</span>
         </a>
+
+        <AddToAppleWallet
+          model={model}
+          tracker={tracker}
+          className="apple-wallet-btn--dimension"
+        />
 
         {quick.length > 0 ? (
           <ul

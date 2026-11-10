@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
 import { resolvePublicCardRequest } from "@/lib/db/cards";
 import { buildVCard } from "@/lib/vcard/build";
-import { getServerEnv, hasSupabasePublicConfig } from "@/lib/validation/env";
+import { getServerEnv } from "@/lib/validation/env";
 import { RESERVED_ORG_SLUGS } from "@/lib/validation/auth";
-import { createClient } from "@/lib/supabase/server";
-import { parseTrafficSource } from "@/lib/analytics/source";
-import type { Json } from "@/types/database";
-
-const SESSION_ID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { recordDownloadEvent } from "@/lib/analytics/server";
 
 type Params = {
   params: Promise<{ organisationSlug: string; cardSlug: string }>;
@@ -53,22 +48,9 @@ export async function GET(req: Request, { params }: Params) {
 
   const filename = `${model.card.slug}.vcf`;
 
-  const requestUrl = new URL(req.url);
-  const sessionId = requestUrl.searchParams.get("sid")?.trim() ?? "";
-  if (SESSION_ID.test(sessionId) && hasSupabasePublicConfig()) {
-    try {
-      const supabase = await createClient();
-      await supabase.rpc("ingest_card_analytics_event", {
-        p_card_id: model.card.id,
-        p_session_id: sessionId,
-        p_event_type: "vcard_download",
-        p_source: parseTrafficSource(requestUrl.searchParams.get("src")),
-        p_metadata: { via: "vcard_endpoint" } as Json,
-      });
-    } catch {
-      /* never block the vCard file */
-    }
-  }
+  await recordDownloadEvent(new URL(req.url), model.card.id, "vcard_download", {
+    via: "vcard_endpoint",
+  });
 
   return new NextResponse(vcard, {
     headers: {

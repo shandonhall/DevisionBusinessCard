@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
+import { AddToAppleWallet } from "@/components/cards/add-to-apple-wallet";
 import type { AnalyticsTracker } from "@/lib/analytics/types";
 import { publicVCardPath, withAttribution } from "@/lib/analytics/source";
 
@@ -142,6 +143,12 @@ export function DriveContactDock({
           Save Contact
         </span>
       )}
+
+      <AddToAppleWallet
+        model={model}
+        tracker={tracker}
+        className="apple-wallet-btn--drive"
+      />
 
       <div className="drive-console">
         <div className="drive-console__rim" aria-hidden />

@@ -4,6 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { Check, Copy, Download, QrCode, Share2, X } from "lucide-react";
 import type { PublicCardViewModel } from "@/types/card";
 import { QrCodeBlock } from "@/components/cards/qr-code-block";
+import { AddToAppleWallet } from "@/components/cards/add-to-apple-wallet";
 
 export function CardActionBar({
   model,
@@ -69,6 +70,8 @@ export function CardActionBar({
         <Download size={18} aria-hidden />
         Save contact
       </a>
+
+      <AddToAppleWallet model={model} />
 
       <div className="grid grid-cols-3 gap-2">
         <button

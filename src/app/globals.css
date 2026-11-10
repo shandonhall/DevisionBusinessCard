@@ -2464,6 +2464,50 @@ a {
   pointer-events: none;
 }
 
+/* Apple Wallet: black badge treatment per Apple's guidelines, shape per layout. */
+.apple-wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.9rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--brand-button-radius, 0.75rem);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: #000;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease;
+}
+
+.apple-wallet-btn:hover {
+  border-color: rgb(255 255 255 / 0.4);
+}
+
+.apple-wallet-btn:active {
+  transform: translateY(1px) scale(0.992);
+}
+
+.apple-wallet-btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.apple-wallet-btn--drive {
+  border-radius: 0.9rem;
+}
+
+.apple-wallet-btn--dimension {
+  border-radius: 999px;
+}
+
 .drive-console {
   position: relative;
   display: flex;

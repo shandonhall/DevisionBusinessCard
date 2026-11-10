@@ -69,6 +69,8 @@ export type PublicCardViewModel = {
     primaryCtaUrl: string | null;
     publicStatus: string;
     publicPath: string;
+    /** Set by the page when Apple Wallet signing is configured on the server. */
+    appleWalletEnabled?: boolean;
   };
   sections: PublicCardSection[];
   tokens: DesignTokens;

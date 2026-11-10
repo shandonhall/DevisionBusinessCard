@@ -11,6 +11,7 @@ export const ANALYTICS_EVENT_TYPES = [
   "card_flip",
   "save_contact",
   "vcard_download",
+  "wallet_pass_download",
   "call_click",
   "whatsapp_click",
   "email_click",
@@ -28,6 +29,7 @@ export const TRAFFIC_SOURCES = [
   "direct",
   "shared",
   "campaign",
+  "wallet",
   "other",
 ] as const;
 

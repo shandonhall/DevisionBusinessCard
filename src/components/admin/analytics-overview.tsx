@@ -106,6 +106,7 @@ export function sourceRows(
     { label: "Direct", value: counts.direct },
     { label: "Shared", value: counts.shared },
     { label: "Campaign", value: counts.campaign },
+    { label: "Wallet pass", value: counts.wallet },
     { label: "Other", value: counts.other },
   ];
 }
@@ -116,6 +117,7 @@ export function actionRows(
   return [
     { label: "Save contact taps", value: counts.save_contact ?? 0 },
     { label: "vCard downloaded", value: counts.vcard_download ?? 0 },
+    { label: "Wallet pass downloaded", value: counts.wallet_pass_download ?? 0 },
     { label: "Call", value: counts.call_click ?? 0 },
     { label: "WhatsApp", value: counts.whatsapp_click ?? 0 },
     { label: "Email", value: counts.email_click ?? 0 },
